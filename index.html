@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trivia Drive — Daily Football Trivia</title>
+<meta name="description" content="Daily overtime football trivia. Win the coin toss, drive for the score, make the stop, and win in as few questions as you can.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#101024; --panel:#1c1c3c; --deep:#000000; --ink:#f8f8f8; --dim:#a8a8c0; --mute:#6c6c88;
+  --gold:#f8b800; --red:#e40058; --pink:#ff6b8b; --green:#58d854; --blue:#3cbcfc; --navy:#0058f8;
+  --field:#00a800; --chalk:#b8f8b8; --line:#3c3c5c; --ball:#b05a1c; --snow:#e8f0ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'VT323',ui-monospace,monospace;font-size:22px;line-height:1.1}
+body{min-height:100vh;display:flex;justify-content:center}
+.px{font-family:'Press Start 2P',ui-monospace,monospace;font-weight:400;line-height:1.35}
+.wrap{width:100%;max-width:440px;padding:16px 16px 28px;display:flex;flex-direction:column;gap:14px}
+.screen{display:flex;flex-direction:column;gap:14px}
+.screen[hidden]{display:none}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.box{--c:var(--ink);background:var(--panel);margin:4px;padding:14px;box-shadow:0 -4px 0 0 var(--c),0 4px 0 0 var(--c),-4px 0 0 0 var(--c),4px 0 0 0 var(--c)}
+.box.gold{--c:var(--gold)} .box.dim{--c:var(--line)} .box.black{background:var(--deep)} .box.blue{--c:var(--blue)}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:400}
+.btn{--c:var(--ink);appearance:none;border:0;margin:4px;min-height:48px;padding:10px 12px;background:var(--panel);color:var(--ink);
+  font-family:'Press Start 2P',ui-monospace,monospace;font-size:11px;line-height:1.4;cursor:pointer;text-decoration:none;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  box-shadow:0 -4px 0 0 var(--c),0 4px 0 0 var(--c),-4px 0 0 0 var(--c),4px 0 0 0 var(--c)}
+.btn:hover:not(:disabled){background:#2a2a52}
+.btn:focus-visible,.link:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px dashed var(--blue);outline-offset:4px}
+.btn:disabled{background:#24243c;color:var(--mute);--c:var(--line);cursor:not-allowed}
+.btn.primary{background:var(--gold);color:var(--bg)}
+.btn.primary:hover{background:#ffcc33}
+.btn.hot{--c:var(--pink)}
+.btn.flag{--c:var(--red);background:#3a0a1c}
+.btn small{display:block;font-family:'VT323',ui-monospace,monospace;font-size:19px;line-height:1;margin-top:6px;color:var(--dim)}
+.btn.primary small{color:#3a2a00}
+.btn:disabled small{color:var(--mute)}
+.btn.sm{min-height:44px;font-size:9px;padding:8px 10px}
+.link{background:none;border:0;color:var(--dim);font-family:'Press Start 2P',ui-monospace,monospace;font-size:9px;cursor:pointer;padding:12px 4px;min-height:44px;align-self:flex-start}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.muted{color:var(--dim)}
+.small{font-size:19px}
+.blink{animation:blink 1.2s steps(1) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.blink{animation:none}}
+.scan{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0,rgba(0,0,0,.16) 1px,transparent 1px,transparent 3px);z-index:50}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:'Press Start 2P',ui-monospace,monospace;font-size:8px;padding:5px 7px;background:#2c2c4c;color:var(--ink)}
+.tag.theme{background:var(--navy)} .tag.wx{background:var(--snow);color:var(--bg)} .tag.po{background:var(--gold);color:var(--bg)} .tag.arch{background:var(--line)}
+
+/* home */
+.logo{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:4px;text-align:center}
+.logo h1{display:flex;flex-direction:column;gap:8px;font-size:28px;line-height:1}
+.logo .t1{color:var(--gold);text-shadow:4px 4px 0 var(--red)}
+.logo .t2{color:var(--ink);text-shadow:4px 4px 0 var(--navy)}
+.stat{background:var(--bg);padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.box .stat{background:var(--bg)}
+.stat .k{font-size:8px;color:var(--dim)}
+.stat .v{font-size:26px;line-height:1}
+.stats4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:4px}
+.wd .l{font-size:7px;color:var(--dim)}
+.wd .c{width:100%;height:30px;display:flex;align-items:center;justify-content:center;background:#2c2c4c;font-size:9px}
+.wd .c.W{background:var(--green);color:var(--bg)} .wd .c.L{background:var(--red)} .wd .c.T{background:var(--blue);color:var(--bg)}
+.wd .c.now{box-shadow:0 0 0 2px var(--gold)} .wd .c.pre{background:transparent;color:var(--mute)}
+.foot{text-align:center;font-size:18px;color:var(--dim)}
+
+/* scoreboard + field */
+.score{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
+.team{display:flex;flex-direction:column;gap:6px}
+.team.r{align-items:flex-end}
+.team .n{font-size:9px}
+.team .s{font-size:26px}
+.pips{display:flex;gap:4px;height:6px}
+.pips i{width:10px;height:6px;background:#2c2c4c}
+.pips i.on{background:var(--gold)}
+.clock{display:flex;flex-direction:column;align-items:center;gap:8px}
+.clock .q{font-size:10px;color:var(--dim)}
+.clock .t{font-size:18px;color:var(--gold)}
+.field{--c:var(--ink);display:flex;height:56px;margin:4px;box-shadow:0 -4px 0 0 var(--c),0 4px 0 0 var(--c),-4px 0 0 0 var(--c),4px 0 0 0 var(--c)}
+.ez{width:22px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font-size:7px}
+.ez.you{background:var(--navy)} .ez.cpu{background:var(--red)}
+.turf{flex:1;position:relative;background:var(--field);overflow:hidden}
+.turf.snow{background:#b8c8d8} .turf.snow .yl{background:#ffffff}
+.turf .yl{position:absolute;top:0;bottom:0;width:2px;background:var(--chalk)}
+.turf .mid{background:var(--ink)}
+.turf .rz{position:absolute;top:0;bottom:0;background:rgba(228,0,88,.28)}
+.turf .gain{position:absolute;top:0;bottom:0;width:3px;background:var(--gold)}
+.turf .ball{position:absolute;top:24px;width:12px;height:8px;background:var(--ball);box-shadow:0 0 0 2px var(--bg);transition:left .35s steps(6)}
+@media (prefers-reduced-motion:reduce){.turf .ball{transition:none}}
+.nums{display:flex;font-size:7px;color:var(--dim);padding:0 4px}
+.nums .sp{width:22px}
+.nums .in{flex:1;position:relative;height:10px}
+.nums span{position:absolute;width:20px;margin-left:-10px;text-align:center}
+.status{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 4px}
+.status .dd{font-size:11px;color:var(--gold)}
+.side{font-size:9px;padding:6px 8px;background:var(--navy);color:var(--ink)}
+.side.def{background:var(--red)}
+.side.pat{background:var(--gold);color:var(--bg)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.topbar .vs{font-size:8px;color:var(--dim);text-align:right}
+
+/* question */
+.qhead{display:flex;justify-content:space-between;align-items:center;font-size:9px;gap:8px}
+.segs{display:flex;gap:2px;height:10px;margin-top:8px}
+.segs i{flex:1;background:#2c2c4c}
+.qtext{font-size:26px;line-height:1.05;margin:12px 0 10px;min-height:54px}
+.answers{display:flex;flex-direction:column;gap:12px}
+.ans{flex-direction:row;justify-content:flex-start;gap:14px;text-align:left;font-family:'VT323',ui-monospace,monospace;font-size:23px;line-height:1;background:var(--bg)}
+.ans b{font-family:'Press Start 2P',ui-monospace,monospace;font-weight:400;font-size:10px;color:var(--gold)}
+.banner{font-size:16px;line-height:1.3}
+.good{color:var(--green)} .bad{color:var(--pink)} .neutral{color:var(--blue)}
+.why{border-left:4px solid var(--line);padding-left:10px;color:var(--dim)}
+.stand{display:flex;gap:8px;align-items:center}
+.stand i{width:18px;height:18px;background:#2c2c4c;display:inline-block}
+
+/* final */
+.chart{display:flex;flex-direction:column;gap:8px}
+.drow{display:flex;align-items:center;gap:8px}
+.drow .lab{width:20px;font-size:8px;color:var(--dim)}
+.drow .cells{display:flex;gap:4px;flex:1;flex-wrap:wrap;align-items:center}
+.drow .cells i{width:18px;height:18px}
+.drow .cells .fl{width:auto;height:auto;font-style:normal;font-size:8px;color:var(--red);font-family:'Press Start 2P',ui-monospace,monospace;padding-left:2px}
+.drow .res{font-size:8px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:18px;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;display:inline-block}
+.m-G{background:var(--green)} .m-I{background:#4c4c6c} .m-S{background:var(--gold)} .m-T{background:var(--red)}
+.m-B{background:var(--blue)} .m-A{background:#fc7460} .m-K{background:#b87cf8}
+textarea,input[type=text],select{width:100%;background:var(--bg);color:var(--ink);border:2px solid var(--line);font-family:'VT323',ui-monospace,monospace;font-size:21px;padding:8px}
+textarea.code{font-family:ui-monospace,monospace;font-size:14px;min-height:150px}
+label{display:block;font-size:19px;color:var(--dim);margin:10px 0 4px}
+label.chk{display:flex;gap:10px;align-items:flex-start;color:var(--ink);margin-top:14px}
+label.chk input{width:22px;height:22px;flex-shrink:0;margin:2px 0 0;accent-color:var(--gold)}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:20px}
+th{font-family:'Press Start 2P',ui-monospace,monospace;font-weight:400;font-size:7px;color:var(--dim);text-align:left;padding:6px 4px;border-bottom:2px solid var(--line)}
+td{padding:6px 4px;border-bottom:1px solid #2c2c4c}
+td.num,th.num{text-align:right}
+tr.me td{color:var(--gold)}
+
+/* archive */
+.alist{display:flex;flex-direction:column;gap:10px}
+.arow{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--panel);padding:10px 12px;min-height:56px}
+.arow .meta{display:flex;flex-direction:column;gap:4px}
+.arow .t{font-size:9px}
+.arow .s{font-size:18px;color:var(--dim)}
+.arow .r{font-size:10px;white-space:nowrap;flex-shrink:0}
+
+dialog{max-width:420px;width:calc(100% - 32px);max-height:calc(100% - 32px);overflow:auto;background:var(--panel);color:var(--ink);border:0;padding:18px;
+  box-shadow:0 -4px 0 0 var(--gold),0 4px 0 0 var(--gold),-4px 0 0 0 var(--gold),4px 0 0 0 var(--gold)}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+dialog h2{font-size:13px;color:var(--gold);margin-bottom:12px}
+dialog h3{font-size:10px;color:var(--blue);margin:14px 0 6px}
+dialog ul{margin:0;padding-left:20px;font-size:20px}
+dialog li{margin-bottom:4px}
+
+/* v2: overtime build */
+.sit{font-family:'Press Start 2P',ui-monospace,monospace;font-size:9px;line-height:1.5;padding:8px 10px;background:#2c2c4c;color:var(--ink);margin:0 4px}
+.sit.sd{background:var(--red);color:var(--ink)}
+.sit.need{background:var(--navy)}
+.fire{font-family:'Press Start 2P',ui-monospace,monospace;font-size:7px;color:#ff9a3c}
+.qcount{font-family:'Press Start 2P',ui-monospace,monospace;font-size:7px;color:var(--dim)}
+.ans.picked{--c:var(--gold);background:#3a3010}
+.ans.ok{--c:var(--green);background:var(--green);color:var(--bg)}
+.ans.ok b{color:var(--bg)}
+.ans.no{--c:var(--red);background:var(--red);color:var(--ink)}
+.drum{font-family:'Press Start 2P',ui-monospace,monospace;font-size:10px;color:var(--gold);text-align:center;padding-top:8px}
+.rankbar{display:flex;gap:2px;height:10px}
+.rankbar i{flex:1;background:#2c2c4c}
+.rankbar i.on{background:var(--gold)}
+.achlist{display:flex;flex-direction:column;gap:8px}
+.ach{display:flex;gap:12px;align-items:center;background:var(--panel);padding:10px 12px}
+.ach .ic{width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#2c2c4c;font-family:'Press Start 2P',ui-monospace,monospace;font-size:10px;color:var(--mute)}
+.ach.on .ic{background:var(--gold);color:var(--bg)}
+.ach .t{font-family:'Press Start 2P',ui-monospace,monospace;font-size:9px}
+.ach .d{font-size:18px;color:var(--dim)}
+.ach.off .t{color:var(--mute)}
+.newach{display:flex;flex-wrap:wrap;gap:6px}
+.newach span{font-family:'Press Start 2P',ui-monospace,monospace;font-size:8px;padding:6px 8px;background:var(--gold);color:var(--bg)}
+.bigres{font-size:24px;line-height:1.2;text-align:center}
+.tomorrow{font-size:20px}
+.coin{width:64px;height:64px;margin:4px auto 0;background:var(--gold);box-shadow:0 0 0 4px #b88a00 inset;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',ui-monospace,monospace;font-size:12px;color:var(--bg)}
+@keyframes flip{0%{transform:scaleX(1)}50%{transform:scaleX(.1)}100%{transform:scaleX(1)}}
+.coin.spin{animation:flip .4s steps(4) 3}
+@media (prefers-reduced-motion:reduce){.coin.spin{animation:none}}
+</style>
+</head>
+<body>
+<div class="scan" aria-hidden="true"></div>
+<div class="wrap">
+
+  <!-- HOME -->
+  <section id="home" class="screen" aria-labelledby="title">
+    <div class="logo">
+      <svg width="80" height="47" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="3" y="0" width="6" height="1" fill="#b05a1c"/><rect x="1" y="1" width="10" height="1" fill="#b05a1c"/>
+        <rect x="0" y="2" width="12" height="3" fill="#b05a1c"/><rect x="1" y="5" width="10" height="1" fill="#b05a1c"/>
+        <rect x="3" y="6" width="6" height="1" fill="#b05a1c"/><rect x="0" y="2" width="1" height="3" fill="#7a3a0c"/>
+        <rect x="11" y="2" width="1" height="3" fill="#7a3a0c"/><rect x="3" y="3" width="6" height="1" fill="#f8f8f8"/>
+        <rect x="4" y="2" width="1" height="3" fill="#f8f8f8"/><rect x="6" y="2" width="1" height="3" fill="#f8f8f8"/>
+        <rect x="8" y="2" width="1" height="3" fill="#f8f8f8"/>
+      </svg>
+      <h1 id="title" class="px"><span class="t1">TRIVIA</span><span class="t2">DRIVE</span></h1>
+      <p class="muted small">Overtime football trivia. One game a day.</p>
+    </div>
+
+    <div class="box gold" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <h2 class="px" style="font-size:12px;color:var(--gold)">DAILY CHALLENGE</h2>
+        <span class="px muted" style="font-size:10px" id="h-num">#1</span>
+      </div>
+      <p id="h-date">Today</p>
+      <p><span class="muted">vs </span><span id="h-opp"></span></p>
+      <p class="muted small" id="h-trait"></p>
+      <div class="tags" id="h-tags"></div>
+      <p class="px" style="font-size:9px;color:var(--blue)" id="h-par"></p>
+      <button class="btn primary" id="h-play" type="button">PLAY TODAY ►</button>
+      <button class="btn sm" id="h-replay" type="button" hidden>REPLAY TODAY · PRACTICE<small>Doesn't count toward your stats</small></button>
+      <p class="muted small" id="h-next"></p>
+      <p class="tomorrow" id="h-tomorrow" hidden></p>
+    </div>
+
+    <div class="box dim" style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <h2 class="px" style="font-size:9px;color:var(--gold)" id="h-rank">ROOKIE</h2>
+        <span class="px muted" style="font-size:8px" id="h-xp">0 XP</span>
+      </div>
+      <div class="rankbar" id="h-rankbar" aria-hidden="true"></div>
+      <p class="muted small" id="h-ranknext"></p>
+    </div>
+
+    <div class="box dim" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <h2 class="px" style="font-size:9px;color:var(--blue)">THIS WEEK</h2>
+        <span class="px" style="font-size:9px" id="h-week-rec">0-0</span>
+      </div>
+      <div class="week" id="h-week" aria-label="This week's results"></div>
+      <p class="muted small">Sunday is a playoff game against an All-Pro CPU.</p>
+    </div>
+
+    <div class="stats4" aria-label="Your stats">
+      <div class="stat"><span class="k px">PLAYED</span><span class="v" id="s-played">0</span></div>
+      <div class="stat"><span class="k px">WIN %</span><span class="v" id="s-win">0</span></div>
+      <div class="stat"><span class="k px">STREAK</span><span class="v" id="s-streak" style="color:var(--green)">0</span></div>
+      <div class="stat"><span class="k px">BYES</span><span class="v" id="s-byes" style="color:var(--blue)">0</span></div>
+    </div>
+    <p class="muted small" id="h-bye-note" style="padding:0 4px"></p>
+
+    <div class="grid2">
+      <button class="btn sm" type="button" id="h-arch">ARCHIVE</button>
+      <button class="btn sm" type="button" id="h-league">LEAGUE</button>
+      <button class="btn sm" type="button" id="h-trophies">TROPHIES</button>
+      <button class="btn sm" type="button" data-help>HOW TO PLAY</button>
+      <button class="btn sm" type="button" id="h-suggest">SUGGEST A Q</button>
+      <button class="btn sm" type="button" data-sound>SOUND: ON</button>
+    </div>
+    <p class="foot">New game every day at midnight, your time.</p>
+    <p class="foot small" style="font-size:16px">Trivia Drive is an independent fan game. It is not affiliated with or endorsed by the NFL, NFLPA, NCAA, or any team, school, conference or bowl game. League, team, school, bowl and player names appear only to identify historical facts, and all trademarks belong to their owners. Questions, explanations and artwork are original to Trivia Drive.</p>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="screen" hidden aria-label="Game">
+    <div class="topbar">
+      <button class="link" type="button" data-home>◄ MENU</button>
+      <span class="vs px" id="g-vs"></span>
+    </div>
+    <div class="box black score px">
+      <div class="team">
+        <span class="n" style="color:var(--blue)">YOU</span>
+        <span class="s" id="g-you">0</span>
+        <span class="fire" id="g-fire"></span>
+      </div>
+      <div class="clock">
+        <span class="q" id="g-qtr">OT</span>
+        <span class="t" id="g-clock">10:00</span>
+        <span class="qcount" id="g-q">Q 0</span>
+      </div>
+      <div class="team r">
+        <span class="n" style="color:var(--pink)" id="g-oppname">CPU</span>
+        <span class="s" id="g-cpu">0</span>
+        <span id="g-flag" style="font-size:7px;color:var(--pink)">FLAG READY</span>
+      </div>
+    </div>
+    <p class="sit" id="g-sit"></p>
+
+    <div>
+      <div class="field" role="img" id="g-field" aria-label="Field">
+        <div class="ez you px">YOU</div>
+        <div class="turf" id="g-turf">
+          <div class="rz" id="g-rz"></div>
+          <div class="yl" style="left:10%"></div><div class="yl" style="left:20%"></div><div class="yl" style="left:30%"></div>
+          <div class="yl" style="left:40%"></div><div class="yl mid" style="left:50%"></div><div class="yl" style="left:60%"></div>
+          <div class="yl" style="left:70%"></div><div class="yl" style="left:80%"></div><div class="yl" style="left:90%"></div>
+          <div class="gain" id="g-gain"></div>
+          <div class="ball" id="g-ball"></div>
+        </div>
+        <div class="ez cpu px">CPU</div>
+      </div>
+      <div class="nums px" aria-hidden="true">
+        <div class="sp"></div>
+        <div class="in"><span style="left:10%">10</span><span style="left:20%">20</span><span style="left:30%">30</span><span style="left:40%">40</span><span style="left:50%">50</span><span style="left:60%">40</span><span style="left:70%">30</span><span style="left:80%">20</span><span style="left:90%">10</span></div>
+        <div class="sp"></div>
+      </div>
+    </div>
+
+    <div class="status">
+      <span class="dd px" id="g-dd"></span>
+      <span class="side px" id="g-side">OFFENSE</span>
+    </div>
+    <p class="muted" id="g-zone" style="padding:0 4px;font-size:20px"></p>
+
+    <div id="panel"></div>
+    <button class="link" type="button" data-sound style="align-self:center">SOUND: ON</button>
+  </section>
+
+  <!-- FINAL -->
+  <section id="final" class="screen" hidden aria-labelledby="f-title">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+      <span class="px muted" style="font-size:9px" id="f-num">DAILY CHALLENGE #1</span>
+      <h2 id="f-title" class="px" style="font-size:22px;color:var(--gold);text-shadow:3px 3px 0 var(--red)">FINAL</h2>
+      <span class="muted" id="f-vs"></span>
+    </div>
+    <div class="box black score px">
+      <div class="team" style="align-items:center"><span class="n" style="color:var(--blue)">YOU</span><span class="s" style="font-size:32px" id="f-you">0</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <span id="f-badge" style="padding:8px 10px;font-size:14px;background:var(--green);color:var(--bg)">WIN</span>
+        <span id="f-by" style="font-size:8px;color:var(--green)"></span>
+      </div>
+      <div class="team" style="align-items:center"><span class="n" style="color:var(--pink)" id="f-oppname">CPU</span><span class="s" style="font-size:32px" id="f-cpu">0</span></div>
+    </div>
+    <p class="bigres px" id="f-big" style="font-size:13px"></p>
+    <div class="box gold">
+      <div class="px" style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:12px"><span style="color:var(--gold)" id="f-cardnum">TRIVIA DRIVE #1</span><span id="f-cardscore"></span></div>
+      <div class="chart" id="f-chart"></div>
+      <div class="legend" style="margin-top:12px">
+        <span><i class="m-G"></i>Gain</span><span><i class="m-I"></i>Incomplete</span><span><i class="m-S"></i>Score</span><span><i class="m-T"></i>Turnover</span>
+        <span><i class="m-B"></i>Stop</span><span><i class="m-A"></i>Allowed</span><span><i class="m-K"></i>Takeaway</span>
+      </div>
+      <p class="muted small" id="f-chal" style="margin-top:10px"></p>
+    </div>
+    <div class="grid2" style="padding:0 4px">
+      <div class="stat"><span class="k px">QUESTIONS</span><span class="v" id="f-q">0</span></div>
+      <div class="stat"><span class="k px">VS PAR</span><span class="v" id="f-par">0</span></div>
+      <div class="stat"><span class="k px">ACCURACY</span><span class="v" id="f-acc">0/0</span></div>
+      <div class="stat"><span class="k px">BEST RUN</span><span class="v" id="f-fire">0</span></div>
+    </div>
+    <div class="box gold" id="f-xpbox" style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <h3 class="px" style="font-size:9px;color:var(--gold)" id="f-rank">ROOKIE</h3><span class="px" style="font-size:8px" id="f-xp">+0 XP</span>
+      </div>
+      <div class="rankbar" id="f-rankbar" aria-hidden="true"></div>
+      <div class="newach" id="f-ach"></div>
+    </div>
+    <div class="box blue" style="display:flex;flex-direction:column;gap:8px">
+      <h3 class="px" style="font-size:9px;color:var(--blue)">HOW YOU COMPARE</h3>
+      <div id="f-compare"></div>
+    </div>
+    <div class="box dim" id="f-weekbox" style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <h3 class="px" style="font-size:9px;color:var(--blue)">THIS WEEK</h3><span class="px" style="font-size:9px" id="f-week-rec"></span>
+      </div>
+      <div class="week" id="f-week"></div>
+      <p class="muted small" id="f-weeknote"></p>
+    </div>
+    <div class="box dim" id="f-tombox">
+      <h3 class="px" style="font-size:9px;color:var(--gold);margin-bottom:8px">TOMORROW</h3>
+      <p class="tomorrow" id="f-tomorrow"></p>
+    </div>
+    <button class="btn primary" type="button" id="f-share">SHARE RESULT</button>
+    <div id="f-sharebox" hidden>
+      <p class="muted" style="margin:4px 4px 8px">Copy this and paste it anywhere:</p>
+      <textarea class="code" id="f-text" readonly aria-label="Share text"></textarea>
+    </div>
+    <button class="btn sm" type="button" id="f-replay" hidden>REPLAY TODAY · PRACTICE<small>Same game, just for fun. Doesn't count.</small></button>
+    <div class="grid2">
+      <button class="btn sm" type="button" id="f-league">LEAGUE</button>
+      <button class="btn sm" type="button" data-home>HOME</button>
+    </div>
+    <p class="muted" style="text-align:center" id="f-next"></p>
+  </section>
+
+  <!-- ARCHIVE -->
+  <section id="archive" class="screen" hidden aria-labelledby="a-title">
+    <button class="link" type="button" data-home>◄ MENU</button>
+    <h2 id="a-title" class="px" style="font-size:14px;color:var(--gold)">ARCHIVE</h2>
+    <p class="muted">Play any Daily you missed. Archive games earn XP and trophies, but don't count toward your streak, week or league.</p>
+    <div class="alist" id="a-list"></div>
+  </section>
+
+  <!-- TROPHIES -->
+  <section id="trophies" class="screen" hidden aria-labelledby="t-title">
+    <button class="link" type="button" data-home>◄ MENU</button>
+    <h2 id="t-title" class="px" style="font-size:14px;color:var(--gold)">TROPHIES</h2>
+    <div class="box gold" style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <h3 class="px" style="font-size:10px;color:var(--gold)" id="t-rank">ROOKIE</h3><span class="px" style="font-size:8px" id="t-xp">0 XP</span>
+      </div>
+      <div class="rankbar" id="t-rankbar" aria-hidden="true"></div>
+      <p class="muted small" id="t-ladder"></p>
+    </div>
+    <p class="muted" id="t-count"></p>
+    <div class="achlist" id="t-list"></div>
+  </section>
+
+  <!-- LEAGUE -->
+  <section id="league" class="screen" hidden aria-labelledby="l-title">
+    <button class="link" type="button" data-home>◄ MENU</button>
+    <h2 id="l-title" class="px" style="font-size:14px;color:var(--gold)">LEAGUE</h2>
+    <p class="muted">No accounts needed. After each Daily, friends share their result. Paste it here to add them to your standings. It's saved on this device only.</p>
+    <div class="box dim">
+      <label for="l-name" style="margin-top:0">Your name (goes in your share code)</label>
+      <div class="row" style="align-items:center">
+        <input type="text" id="l-name" maxlength="10" autocomplete="nickname" style="flex:2">
+        <button class="btn sm" type="button" id="l-save">SAVE</button>
+      </div>
+      <p class="muted small" id="l-namemsg" aria-live="polite"></p>
+    </div>
+    <div class="box dim">
+      <label for="l-paste" style="margin-top:0">Paste a friend's result (or several)</label>
+      <textarea id="l-paste" rows="4" placeholder="Trivia Drive #3 ... TD-3-10-7-12-14-SAM-AB12"></textarea>
+      <button class="btn primary" type="button" id="l-add" style="width:calc(100% - 8px);margin-top:12px">ADD TO LEAGUE</button>
+      <p class="small" id="l-msg" aria-live="polite" style="margin-top:8px"></p>
+    </div>
+    <div class="box blue">
+      <h3 class="px" style="font-size:9px;color:var(--blue);margin-bottom:8px" id="l-today-h">TODAY</h3>
+      <div id="l-today"></div>
+    </div>
+    <div class="box blue">
+      <h3 class="px" style="font-size:9px;color:var(--blue);margin-bottom:8px">THIS WEEK</h3>
+      <div id="l-week"></div>
+      <p class="muted small" style="margin-top:8px">Ranked by wins, then fewest questions per win.</p>
+    </div>
+    <button class="btn sm" type="button" id="l-clear">CLEAR LEAGUE</button>
+  </section>
+
+  <div id="sr" class="sr-only" aria-live="polite"></div>
+</div>
+
+<dialog id="help" aria-labelledby="help-title">
+  <h2 id="help-title" class="px">HOW TO PLAY</h2>
+  <p>Every game is NFL-style overtime. Everyone gets the same game each day. Win in as few questions as you can.</p>
+  <h3 class="px">OVERTIME RULES</h3>
+  <ul>
+    <li>Coin toss: win it and choose to receive or defer.</li>
+    <li>Both teams get one possession, starting at their own 35.</li>
+    <li>After both possessions, whoever leads wins. Still tied? Sudden death: the next score wins.</li>
+    <li>If the team that kicked off scores a safety on the opening drive, it wins right away.</li>
+  </ul>
+  <h3 class="px">OFFENSE</h3>
+  <ul>
+    <li>EASY +5, MEDIUM +10, HARD +20 yards. 4 downs to gain 10.</li>
+    <li>Keep calling Easy or Medium and the defense catches on: those plays gain fewer yards each time. A HARD call resets it.</li>
+    <li>Inside the 20: Hard only, and a right answer is a touchdown.</li>
+    <li>Miss a HARD question: 1-in-4 chance it's intercepted.</li>
+    <li>Field goal (Medium) from the opponent's 30. Punt on 4th down.</li>
+  </ul>
+  <h3 class="px">DEFENSE</h3>
+  <ul>
+    <li>PREVENT (Easy): right holds them to 3 yards, wrong gives up 10.</li>
+    <li>BASE (Medium): right is no gain, wrong gives up 10.</li>
+    <li>BLITZ (Hard): right is a sack and a 1-in-3 takeaway chance, wrong gives up 20.</li>
+    <li>Answer a Hard question to block their field goals and stop their two-point tries.</li>
+  </ul>
+  <h3 class="px">BONUSES</h3>
+  <ul>
+    <li>ON FIRE: 3 right in a row makes HARD plays gain 25 and blitz takeaways 1-in-2.</li>
+    <li>Coach's challenge: once per game, throw the flag after a wrong answer for a new question.</li>
+    <li>Some days hide a trick play: one Hard question for 30 yards.</li>
+  </ul>
+  <h3 class="px">SCORING</h3>
+  <ul>
+    <li>Your result is the number of questions it took to win. Par is the estimated number for an average player that day.</li>
+    <li>Earn XP and trophies to climb from Rookie to Hall of Famer.</li>
+  </ul>
+  <h3 class="px">EVERY DAY IS DIFFERENT</h3>
+  <ul>
+    <li>A made-up opponent with its own style, themed days (Rules Tuesday, College Wednesday, Throwback Thursday, Legends Friday, Championship Saturday) and weather.</li>
+    <li>Sunday is a playoff game against an All-Pro CPU.</li>
+    <li>Every 7 days in a row earns a bye that protects your streak.</li>
+    <li>After you play, replay today's game as practice. It never counts.</li>
+  </ul>
+  <form method="dialog" style="margin-top:16px"><button class="btn primary" style="width:calc(100% - 8px)" type="submit">GOT IT</button></form>
+</dialog>
+
+<dialog id="suggest" aria-labelledby="sg-title">
+  <h2 id="sg-title" class="px">SUGGEST A QUESTION</h2>
+  <p class="muted small">Send the creator a question for future Dailies. Every question gets checked against a source before it's used.</p>
+  <form id="sg-form">
+    <label for="sg-q">Question</label><textarea id="sg-q" rows="2"></textarea>
+    <label for="sg-a">Correct answer</label><input type="text" id="sg-a">
+    <label for="sg-w1">Wrong answer 1</label><input type="text" id="sg-w1">
+    <label for="sg-w2">Wrong answer 2</label><input type="text" id="sg-w2">
+    <label for="sg-w3">Wrong answer 3</label><input type="text" id="sg-w3">
+    <div class="row">
+      <div><label for="sg-c">Category</label><select id="sg-c">
+        <option value="rules">Rules</option><option value="superbowl">Championship games</option><option value="college">College football</option><option value="franchise">Franchises</option>
+        <option value="legends">Legends</option><option value="moments">Moments</option><option value="records">Records</option><option value="coaches">Coaches &amp; Draft</option>
+      </select></div>
+      <div><label for="sg-d">Difficulty</label><select id="sg-d"><option value="e">Easy</option><option value="m" selected>Medium</option><option value="h">Hard</option></select></div>
+    </div>
+    <label for="sg-s">Source link (where you checked it)</label><input type="text" id="sg-s" inputmode="url">
+    <label class="chk" for="sg-ok"><input type="checkbox" id="sg-ok"> I wrote this question myself (not copied from another quiz, book or website), and Trivia Drive may use and edit it.</label>
+    <p class="small bad" id="sg-err" aria-live="polite" style="margin-top:8px"></p>
+    <button class="btn primary" type="submit" style="width:calc(100% - 8px);margin-top:10px">CREATE SUBMISSION</button>
+  </form>
+  <div id="sg-out" hidden style="margin-top:12px">
+    <textarea class="code" id="sg-text" readonly aria-label="Your submission"></textarea>
+    <button class="btn" type="button" id="sg-copy" style="width:calc(100% - 8px);margin-top:10px">COPY</button>
+    <p class="muted small" id="sg-where" style="margin-top:8px"></p>
+  </div>
+  <form method="dialog" style="margin-top:12px"><button class="btn sm" style="width:calc(100% - 8px)" type="submit">CLOSE</button></form>
+</dialog>
+
+<script id="bank" type="application/json">[{"t": "e", "c": "rules", "q": "How many points is a touchdown worth?", "a": ["6", "7", "5", "3"], "x": "A touchdown is worth 6, with a try for 1 or 2 more after it."}, {"t": "e", "c": "rules", "q": "How many points is a field goal worth?", "a": ["3", "2", "1", "4"], "x": "A field goal through the uprights is worth 3."}, {"t": "e", "c": "rules", "q": "How many points is a safety worth?", "a": ["2", "1", "3", "6"], "x": "A safety is worth 2, and the scoring team also gets the ball back on a free kick."}, {"t": "e", "c": "rules", "q": "How many players does each team have on the field at once?", "a": ["11", "10", "12", "9"], "x": "Each side has 11 players on the field for every play."}, {"t": "e", "c": "rules", "q": "How many downs does the offense get to gain 10 yards?", "a": ["4", "3", "5", "6"], "x": "Gain 10 yards within 4 downs to earn a new set of downs."}, {"t": "e", "c": "rules", "q": "How long is an NFL field from goal line to goal line?", "a": ["100 yards", "120 yards", "110 yards", "90 yards"], "x": "It's 100 yards between the goal lines, plus a 10-yard end zone at each end."}, {"t": "e", "c": "rules", "q": "How long is each quarter of an NFL game?", "a": ["15 minutes", "12 minutes", "20 minutes", "10 minutes"], "x": "Four 15-minute quarters make a 60-minute game."}, {"t": "e", "c": "rules", "q": "How many timeouts does each team get per half?", "a": ["3", "2", "4", "5"], "x": "Each team gets 3 timeouts per half."}, {"t": "e", "c": "rules", "q": "What is it called when the quarterback is tackled behind the line before he can throw?", "a": ["A sack", "A safety", "A blitz", "A punt"], "x": "A sack is a tackle of the passer behind the line of scrimmage."}, {"t": "e", "c": "rules", "q": "Which position snaps the ball to start most plays?", "a": ["Center", "Guard", "Tight end", "Fullback"], "x": "The center snaps the ball, usually to the quarterback."}, {"t": "e", "c": "rules", "q": "How many teams are in the NFL?", "a": ["32", "30", "28", "34"], "x": "The NFL has 32 teams, split evenly between the AFC and NFC."}, {"t": "e", "c": "rules", "q": "What do officials throw onto the field to signal a penalty?", "a": ["A yellow flag", "A red flag", "A white towel", "A blue cone"], "x": "Officials throw a yellow flag. Coaches throw a red one to challenge a call."}, {"t": "e", "c": "rules", "q": "What is the scoring area at each end of the field called?", "a": ["The end zone", "The red zone", "The neutral zone", "The backfield"], "x": "Carry or catch the ball in the end zone to score a touchdown."}, {"t": "e", "c": "rules", "q": "How many points is a successful two-point conversion worth?", "a": ["2", "1", "3", "6"], "x": "A two-point try is a play from the 2-yard line instead of a kick."}, {"t": "e", "c": "superbowl", "y": 1967, "q": "Which team won Super Bowl I?", "a": ["Green Bay Packers", "Kansas City Chiefs", "Dallas Cowboys", "New York Jets"], "x": "Green Bay beat Kansas City 35-10 in January 1967."}, {"t": "e", "c": "superbowl", "q": "The Super Bowl trophy is named after which legendary coach?", "a": ["Vince Lombardi", "Tom Landry", "George Halas", "Don Shula"], "x": "The Vince Lombardi Trophy honors the coach of the Packers' 1960s dynasty."}, {"t": "e", "c": "superbowl", "q": "The Super Bowl is played between the champions of which two conferences?", "a": ["AFC and NFC", "AL and NL", "East and West", "North and South"], "x": "The AFC and NFC champions meet in the Super Bowl."}, {"t": "e", "c": "superbowl", "q": "Super Bowls are traditionally numbered using what?", "a": ["Roman numerals", "Letters", "The year", "Greek letters"], "x": "Super Bowls use Roman numerals, like LX for the 60th."}, {"t": "e", "c": "superbowl", "y": 1972, "q": "Which team went undefeated in 1972, including the Super Bowl?", "a": ["Miami Dolphins", "Pittsburgh Steelers", "Dallas Cowboys", "Green Bay Packers"], "x": "The 1972 Dolphins went 17-0, still the NFL's only perfect season."}, {"t": "e", "c": "superbowl", "y": 1986, "q": "Which team recorded \"The Super Bowl Shuffle\" before winning Super Bowl XX?", "a": ["Chicago Bears", "New York Giants", "San Francisco 49ers", "Miami Dolphins"], "x": "The 1985 Bears released the song, then won Super Bowl XX in January 1986."}, {"t": "e", "c": "superbowl", "q": "In which month is the Super Bowl now played?", "a": ["February", "January", "March", "December"], "x": "Every Super Bowl since 2004 has been played in February."}, {"t": "e", "c": "franchise", "q": "Which team plays its home games at Lambeau Field?", "a": ["Green Bay Packers", "Chicago Bears", "Minnesota Vikings", "Detroit Lions"], "x": "The Packers have played at Lambeau Field since it opened in 1957."}, {"t": "e", "c": "franchise", "y": 1979, "q": "Which team is nicknamed \"America's Team\"?", "a": ["Dallas Cowboys", "New York Giants", "Washington", "Pittsburgh Steelers"], "x": "The nickname came from NFL Films' highlight film of the Cowboys' 1978 season."}, {"t": "e", "c": "franchise", "q": "Which NFL team is owned by thousands of fan shareholders?", "a": ["Green Bay Packers", "Buffalo Bills", "Kansas City Chiefs", "Cleveland Browns"], "x": "The Packers are publicly owned, with no single owner."}, {"t": "e", "c": "franchise", "q": "Which city do the Steelers call home?", "a": ["Pittsburgh", "Cleveland", "Philadelphia", "Baltimore"], "x": "The franchise has played in Pittsburgh since it was founded in 1933."}, {"t": "e", "c": "franchise", "q": "Which team's fans are known as the \"Dawg Pound\"?", "a": ["Cleveland Browns", "Chicago Bears", "Buffalo Bills", "Detroit Lions"], "x": "The Dawg Pound is the Browns' famous end-zone bleacher section."}, {"t": "e", "c": "franchise", "q": "Which team's fans call themselves the \"12s\"?", "a": ["Seattle Seahawks", "San Francisco 49ers", "Los Angeles Rams", "Arizona Cardinals"], "x": "Seattle's fans are the \"12th man,\" or the 12s."}, {"t": "e", "c": "franchise", "q": "Which team traditionally hosts a game every Thanksgiving along with Dallas?", "a": ["Detroit Lions", "Chicago Bears", "New York Giants", "Green Bay Packers"], "x": "The Lions have hosted a Thanksgiving game almost every year since 1934."}, {"t": "e", "c": "franchise", "q": "What kind of bird is Philadelphia's NFL team named after?", "a": ["Eagle", "Falcon", "Raven", "Cardinal"], "x": "The Eagles have played in Philadelphia since 1933."}, {"t": "e", "c": "legends", "y": 1980, "q": "Which legendary running back was nicknamed \"Sweetness\"?", "a": ["Walter Payton", "Barry Sanders", "Jim Brown", "Eric Dickerson"], "x": "Walter Payton picked up the nickname at Jackson State and carried it through 13 seasons with the Bears."}, {"t": "e", "c": "legends", "y": 1985, "q": "Joe Montana won four Super Bowls with which team?", "a": ["San Francisco 49ers", "Kansas City Chiefs", "Dallas Cowboys", "Los Angeles Rams"], "x": "Montana won four titles with San Francisco after the 1981, 1984, 1988 and 1989 seasons, then finished his career in Kansas City."}, {"t": "e", "c": "legends", "y": 1969, "q": "Which quarterback was nicknamed \"Broadway Joe\"?", "a": ["Joe Namath", "Joe Montana", "Joe Theismann", "Joe Ferguson"], "x": "Namath got the name as the star quarterback of the New York Jets."}, {"t": "e", "c": "legends", "y": 2016, "q": "Peyton Manning won Super Bowls with the Colts and which other team?", "a": ["Denver Broncos", "Tennessee Titans", "New York Giants", "Miami Dolphins"], "x": "Manning won Super Bowl XLI with Indianapolis and Super Bowl 50 with Denver."}, {"t": "e", "c": "legends", "y": 1990, "q": "Jerry Rice is often called the greatest ever at which position?", "a": ["Wide receiver", "Running back", "Tight end", "Cornerback"], "x": "Rice holds the NFL's career records for catches, receiving yards and receiving touchdowns."}, {"t": "e", "c": "legends", "y": 2010, "q": "Tom Brady won six Super Bowls with which team?", "a": ["New England Patriots", "Tampa Bay Buccaneers", "New York Jets", "Miami Dolphins"], "x": "Brady won six titles in New England and a seventh with Tampa Bay."}, {"t": "e", "c": "legends", "y": 2012, "q": "Which quarterback was nicknamed \"The Sheriff\"?", "a": ["Peyton Manning", "Tom Brady", "Brett Favre", "Drew Brees"], "x": "Peyton Manning was \"The Sheriff\" for running the offense at the line."}, {"t": "e", "c": "legends", "q": "In which city is the Pro Football Hall of Fame?", "a": ["Canton, Ohio", "Cleveland, Ohio", "Green Bay, Wisconsin", "Chicago, Illinois"], "x": "The Hall opened in 1963 in Canton, where the league was founded in 1920."}, {"t": "e", "c": "moments", "y": 1975, "q": "What is a long, last-second desperation pass into the end zone called?", "a": ["A Hail Mary", "A flea flicker", "A Statue of Liberty", "A Wildcat"], "x": "Roger Staubach made the term famous after a 1975 playoff win."}, {"t": "e", "c": "moments", "q": "On which trick play does the running back pitch the ball back to the quarterback to throw deep?", "a": ["A flea flicker", "A Hail Mary", "A Wildcat", "A quarterback sneak"], "x": "The flea flicker fakes a run to pull the defense up, then goes deep."}, {"t": "e", "c": "coaches", "q": "What is the NFL's yearly selection of college players called?", "a": ["The Draft", "The Combine", "The Pro Bowl", "Free agency"], "x": "Each spring, teams take turns picking college players in the Draft."}, {"t": "e", "c": "coaches", "q": "Without trades, which team picks first in the NFL Draft?", "a": ["The team with the worst record", "The Super Bowl champion", "A lottery winner", "The oldest franchise"], "x": "Draft order runs from the worst record up to the Super Bowl champion."}, {"t": "e", "c": "coaches", "q": "What is the NFL's all-star game traditionally called?", "a": ["The Pro Bowl", "The Rose Bowl", "The Super Bowl", "The Hall of Fame Game"], "x": "The Pro Bowl honors the season's top players."}, {"t": "e", "c": "coaches", "q": "At which event do draft prospects run the 40-yard dash for scouts?", "a": ["The Scouting Combine", "The Pro Bowl", "The Super Bowl", "The Hall of Fame Game"], "x": "At the Scouting Combine, prospects run, jump and lift for NFL teams."}, {"t": "m", "c": "rules", "q": "How many yards is a false start penalty?", "a": ["5", "10", "15", "2"], "x": "A false start costs the offense 5 yards."}, {"t": "m", "c": "rules", "q": "How many yards is an offensive holding penalty?", "a": ["10", "5", "15", "20"], "x": "Offensive holding is a 10-yard penalty."}, {"t": "m", "c": "rules", "q": "How many yards is a personal foul, like roughing the passer?", "a": ["15", "10", "5", "25"], "x": "Personal fouls cost 15 yards."}, {"t": "m", "c": "rules", "q": "Since 2015, extra-point kicks are snapped from which yard line?", "a": ["The 15", "The 2", "The 10", "The 20"], "x": "Moving the snap to the 15 turned the extra point into a 33-yard kick."}, {"t": "m", "c": "rules", "q": "How many feet must an NFL receiver get down in bounds for a catch?", "a": ["2", "1", "3", "None"], "x": "The NFL requires two feet in bounds. College requires one."}, {"t": "m", "c": "rules", "q": "A kick that ends in the end zone and is downed there results in what?", "a": ["A touchback", "A safety", "A fair catch", "A muff"], "x": "A touchback gives the receiving team the ball without a return."}, {"t": "m", "c": "rules", "q": "A returner waves his hand to catch a punt without being hit. What is that?", "a": ["A fair catch", "A touchback", "A kneel-down", "An onside call"], "x": "On a fair catch, the returner can't be hit but can't advance the ball."}, {"t": "m", "c": "rules", "q": "How long is the NFL play clock after most plays end?", "a": ["40 seconds", "25 seconds", "30 seconds", "45 seconds"], "x": "The play clock runs 40 seconds after most plays, 25 after some stoppages."}, {"t": "m", "c": "rules", "q": "A short kickoff meant to be recovered by the kicking team is called what?", "a": ["An onside kick", "A squib kick", "A pooch punt", "A drop kick"], "x": "An onside kick is a short kick the kicking team tries to recover."}, {"t": "m", "c": "rules", "q": "How many yards is a delay of game penalty?", "a": ["5", "10", "15", "2"], "x": "Delay of game costs the offense 5 yards."}, {"t": "m", "c": "rules", "q": "How many yards is a face mask penalty?", "a": ["15", "5", "10", "20"], "x": "Grabbing and twisting the face mask is a 15-yard personal foul."}, {"t": "m", "c": "rules", "q": "After a touchback on a punt, where does the receiving team get the ball?", "a": ["Its own 20", "Its own 25", "Its own 30", "Its own 35"], "x": "A punt that ends in a touchback is brought out to the 20."}, {"t": "m", "c": "rules", "q": "If the offense commits holding in its own end zone, what is the result?", "a": ["A safety", "A touchback", "A replay of the down", "A 15-yard penalty"], "x": "An offensive foul in its own end zone gives the defense a safety."}, {"t": "m", "c": "rules", "q": "At least how many offensive players must line up on the line of scrimmage?", "a": ["7", "5", "6", "8"], "x": "The offense must have at least 7 players on the line at the snap."}, {"t": "m", "c": "rules", "q": "How long is a regular-season overtime period?", "a": ["10 minutes", "15 minutes", "5 minutes", "12 minutes"], "x": "Regular-season overtime has been 10 minutes since 2017."}, {"t": "m", "c": "superbowl", "y": 1967, "q": "Which city hosted Super Bowl I?", "a": ["Los Angeles", "Miami", "New Orleans", "Houston"], "x": "Super Bowl I was played at the Los Angeles Memorial Coliseum."}, {"t": "m", "c": "superbowl", "y": 1968, "q": "Who was named MVP of both Super Bowl I and Super Bowl II?", "a": ["Bart Starr", "Max McGee", "Len Dawson", "Paul Hornung"], "x": "Bart Starr led Green Bay to wins in the first two Super Bowls."}, {"t": "m", "c": "superbowl", "y": 1993, "q": "Which team lost four straight Super Bowls in the early 1990s?", "a": ["Buffalo Bills", "Denver Broncos", "Minnesota Vikings", "Cincinnati Bengals"], "x": "Buffalo lost Super Bowls XXV through XXVIII."}, {"t": "m", "c": "superbowl", "y": 2008, "q": "Which team won Super Bowl XLII, ending the Patriots' perfect season?", "a": ["New York Giants", "Philadelphia Eagles", "Indianapolis Colts", "Pittsburgh Steelers"], "x": "The Giants beat 18-0 New England 17-14."}, {"t": "m", "c": "superbowl", "y": 1969, "q": "Which team pulled off the famous upset in Super Bowl III?", "a": ["New York Jets", "Baltimore Colts", "Kansas City Chiefs", "Oakland Raiders"], "x": "The Jets beat the heavily favored Baltimore Colts 16-7."}, {"t": "m", "c": "superbowl", "y": 1986, "q": "Which team did the 1985 Chicago Bears beat in Super Bowl XX?", "a": ["New England Patriots", "Miami Dolphins", "Denver Broncos", "Los Angeles Rams"], "x": "The Bears beat New England 46-10."}, {"t": "m", "c": "superbowl", "y": 2016, "q": "Super Bowl 50 broke tradition by using what instead of Roman numerals?", "a": ["Arabic numerals", "The year", "A sponsor name", "Letters"], "x": "The league used \"50\" instead of \"L\" for its 50th Super Bowl."}, {"t": "m", "c": "superbowl", "y": 1991, "q": "Who was named MVP of Super Bowl XXV?", "a": ["Ottis Anderson", "Phil Simms", "Jeff Hostetler", "Mark Bavaro"], "x": "Anderson ran for 102 yards as the Giants beat Buffalo 20-19."}, {"t": "m", "c": "superbowl", "y": 1997, "q": "Which team won Super Bowl XXXI?", "a": ["Green Bay Packers", "New England Patriots", "Denver Broncos", "Dallas Cowboys"], "x": "Brett Favre's Packers beat New England 35-21."}, {"t": "m", "c": "superbowl", "y": 1979, "q": "The Steelers beat which team in both Super Bowl X and Super Bowl XIII?", "a": ["Dallas Cowboys", "Minnesota Vikings", "Los Angeles Rams", "Oakland Raiders"], "x": "Pittsburgh beat Dallas 21-17 and then 35-31."}, {"t": "m", "c": "superbowl", "y": 1994, "q": "Who coached the Cowboys to Super Bowl wins after the 1992 and 1993 seasons?", "a": ["Jimmy Johnson", "Barry Switzer", "Tom Landry", "Bill Parcells"], "x": "Jimmy Johnson's Cowboys won Super Bowls XXVII and XXVIII."}, {"t": "m", "c": "franchise", "y": 1990, "q": "Before becoming the Titans, the franchise was best known as which team?", "a": ["Houston Oilers", "Houston Texans", "Memphis Showboats", "St. Louis Cardinals"], "x": "The Houston Oilers moved to Tennessee in 1997 and became the Titans in 1999."}, {"t": "m", "c": "franchise", "y": 1984, "q": "Which city did the Colts play in before Indianapolis?", "a": ["Baltimore", "Cleveland", "St. Louis", "Houston"], "x": "The Colts moved from Baltimore to Indianapolis in 1984."}, {"t": "m", "c": "franchise", "y": 1996, "q": "The Baltimore Ravens were formed when which team's organization moved in 1996?", "a": ["Cleveland Browns", "Baltimore Colts", "Houston Oilers", "Los Angeles Rams"], "x": "The Browns' organization moved to Baltimore; Cleveland kept the Browns name and history."}, {"t": "m", "c": "franchise", "y": 2020, "q": "Which city did the Raiders leave when they moved to Las Vegas in 2020?", "a": ["Oakland", "Los Angeles", "San Diego", "Sacramento"], "x": "The Raiders left Oakland for Las Vegas before the 2020 season."}, {"t": "m", "c": "franchise", "y": 2016, "q": "The Rams returned to Los Angeles in 2016 after playing in which city?", "a": ["St. Louis", "San Diego", "Baltimore", "Cleveland"], "x": "The Rams played in St. Louis from 1995 to 2015."}, {"t": "m", "c": "franchise", "q": "Which division do the Dallas Cowboys play in?", "a": ["NFC East", "NFC South", "NFC West", "AFC South"], "x": "Dallas shares the NFC East with Philadelphia, the Giants and Washington."}, {"t": "m", "c": "franchise", "y": 1920, "q": "Which team was founded as the Decatur Staleys?", "a": ["Chicago Bears", "Green Bay Packers", "Arizona Cardinals", "Detroit Lions"], "x": "The Staleys moved to Chicago in 1921 and became the Bears in 1922."}, {"t": "m", "c": "franchise", "y": 2021, "q": "What was Washington's team name in the 2020 and 2021 seasons?", "a": ["Washington Football Team", "Washington Generals", "Washington Senators", "Washington Federals"], "x": "Washington used the placeholder name before becoming the Commanders in 2022."}, {"t": "m", "c": "legends", "y": 1975, "q": "\"Mean Joe\" Greene played his entire career for which team?", "a": ["Pittsburgh Steelers", "Oakland Raiders", "Los Angeles Rams", "Minnesota Vikings"], "x": "Greene anchored Pittsburgh's \"Steel Curtain\" defense."}, {"t": "m", "c": "legends", "y": 1995, "q": "Barry Sanders played his entire career with which team?", "a": ["Detroit Lions", "Chicago Bears", "Dallas Cowboys", "Minnesota Vikings"], "x": "Sanders spent all 10 of his seasons in Detroit."}, {"t": "m", "c": "legends", "y": 1999, "q": "Which quarterback won back-to-back Super Bowls in his final two seasons?", "a": ["John Elway", "Peyton Manning", "Terry Bradshaw", "Joe Montana"], "x": "Elway won Super Bowls XXXII and XXXIII, then retired."}, {"t": "m", "c": "legends", "y": 2005, "q": "Which Hall of Fame running back was known as \"The Bus\"?", "a": ["Jerome Bettis", "Earl Campbell", "Larry Csonka", "Marshawn Lynch"], "x": "Jerome Bettis won a Super Bowl with Pittsburgh in his final season."}, {"t": "m", "c": "legends", "y": 1993, "q": "Which pass rusher was known as \"The Minister of Defense\"?", "a": ["Reggie White", "Deacon Jones", "Bruce Smith", "Michael Strahan"], "x": "Reggie White, an ordained minister, starred for the Eagles and Packers."}, {"t": "m", "c": "legends", "y": 1990, "q": "Dan Marino played his entire career for which team?", "a": ["Miami Dolphins", "New York Jets", "Buffalo Bills", "Pittsburgh Steelers"], "x": "Marino played all 17 of his seasons with Miami."}, {"t": "m", "c": "legends", "y": 1986, "q": "Lawrence Taylor starred at linebacker for which team?", "a": ["New York Giants", "New York Jets", "Chicago Bears", "Dallas Cowboys"], "x": "Lawrence Taylor won two Super Bowls with the Giants."}, {"t": "m", "c": "legends", "y": 1995, "q": "Which Hall of Fame cornerback was nicknamed \"Prime Time\"?", "a": ["Deion Sanders", "Darrell Green", "Rod Woodson", "Dick \"Night Train\" Lane"], "x": "Deion Sanders was \"Prime Time,\" a shutdown corner and dangerous returner."}, {"t": "m", "c": "legends", "y": 1985, "q": "Which quarterback was nicknamed \"Joe Cool\"?", "a": ["Joe Montana", "Joe Namath", "Joe Theismann", "Joe Ferguson"], "x": "Joe Montana's calm in big moments earned him \"Joe Cool.\""}, {"t": "m", "c": "legends", "y": 1969, "q": "Which Raiders quarterback was nicknamed \"The Mad Bomber\"?", "a": ["Daryle Lamonica", "Ken Stabler", "Jim Plunkett", "George Blanda"], "x": "Lamonica's love of the deep pass earned him the nickname."}, {"t": "m", "c": "legends", "y": 1967, "q": "Gale Sayers played his entire career for which team?", "a": ["Chicago Bears", "Green Bay Packers", "Detroit Lions", "Baltimore Colts"], "x": "Sayers starred for Chicago from 1965 to 1971."}, {"t": "m", "c": "moments", "y": 1972, "q": "Who caught the \"Immaculate Reception\" in 1972?", "a": ["Franco Harris", "Lynn Swann", "Terry Bradshaw", "John Stallworth"], "x": "Franco Harris scooped a deflected pass for the winning TD against Oakland."}, {"t": "m", "c": "moments", "y": 1982, "q": "Who made \"The Catch\" in the January 1982 NFC Championship Game?", "a": ["Dwight Clark", "Jerry Rice", "Roger Craig", "Freddie Solomon"], "x": "Dwight Clark's leaping grab of a Joe Montana pass beat Dallas."}, {"t": "m", "c": "moments", "y": 2008, "q": "Which Giants receiver made the \"Helmet Catch\" in Super Bowl XLII?", "a": ["David Tyree", "Plaxico Burress", "Amani Toomer", "Steve Smith"], "x": "David Tyree pinned Eli Manning's pass against his helmet."}, {"t": "m", "c": "moments", "y": 1967, "q": "The 1967 \"Ice Bowl\" championship game was played at which stadium?", "a": ["Lambeau Field", "Soldier Field", "Metropolitan Stadium", "Cleveland Stadium"], "x": "It was played in Green Bay at about 13 degrees below zero."}, {"t": "m", "c": "moments", "y": 2018, "q": "The \"Philly Special\" trick play happened in which Super Bowl?", "a": ["Super Bowl LII", "Super Bowl LI", "Super Bowl LIII", "Super Bowl XXXIX"], "x": "The Eagles ran it on 4th down before halftime and went on to beat New England."}, {"t": "m", "c": "records", "y": 2004, "q": "Who is the NFL's all-time career rushing yards leader?", "a": ["Emmitt Smith", "Walter Payton", "Barry Sanders", "Adrian Peterson"], "x": "Emmitt Smith finished with 18,355 career rushing yards."}, {"t": "m", "c": "records", "y": 2022, "q": "Who has thrown the most career touchdown passes in NFL history?", "a": ["Tom Brady", "Drew Brees", "Peyton Manning", "Brett Favre"], "x": "Brady threw 649 regular-season touchdown passes."}, {"t": "m", "c": "records", "y": 2004, "q": "Who holds the NFL record for career receiving yards?", "a": ["Jerry Rice", "Larry Fitzgerald", "Terrell Owens", "Randy Moss"], "x": "Rice finished with 22,895 receiving yards."}, {"t": "m", "c": "records", "y": 2004, "q": "Who holds the NFL record for career receiving touchdowns?", "a": ["Jerry Rice", "Randy Moss", "Terrell Owens", "Cris Carter"], "x": "Rice caught 197 touchdown passes."}, {"t": "m", "c": "records", "y": 2007, "q": "Which team was the first to go 16-0 in the regular season?", "a": ["New England Patriots", "Miami Dolphins", "Chicago Bears", "Carolina Panthers"], "x": "The 2007 Patriots went 16-0, then lost Super Bowl XLII."}, {"t": "m", "c": "coaches", "y": 1979, "q": "Which coach led the Steelers to four Super Bowl titles in the 1970s?", "a": ["Chuck Noll", "Bill Cowher", "Tom Landry", "Don Shula"], "x": "Noll's Steelers won Super Bowls IX, X, XIII and XIV."}, {"t": "m", "c": "coaches", "y": 2019, "q": "Which head coach won six Super Bowls with the Patriots?", "a": ["Bill Belichick", "Bill Parcells", "Pete Carroll", "Tom Coughlin"], "x": "Belichick's Patriots won six titles between the 2001 and 2018 seasons."}, {"t": "m", "c": "coaches", "y": 1998, "q": "Who was the No. 1 overall pick in the 1998 NFL Draft?", "a": ["Peyton Manning", "Randy Moss", "Charles Woodson", "Tim Couch"], "x": "Indianapolis took Manning first; San Diego took Ryan Leaf second."}, {"t": "m", "c": "coaches", "y": 1972, "q": "Which coach led the Dolphins through their perfect 1972 season?", "a": ["Don Shula", "Chuck Noll", "Tom Landry", "Hank Stram"], "x": "Don Shula coached the 1972 Dolphins to 17-0."}, {"t": "m", "c": "coaches", "q": "The last pick of each NFL Draft is given what nickname?", "a": ["Mr. Irrelevant", "Mr. Last Call", "Mr. Leftover", "Mr. Longshot"], "x": "The final pick of every draft is celebrated as \"Mr. Irrelevant.\""}, {"t": "m", "c": "coaches", "y": 1978, "q": "Which college did Joe Montana play for?", "a": ["Notre Dame", "USC", "Alabama", "Michigan"], "x": "Montana won a national title at Notre Dame before the 49ers drafted him in 1979."}, {"t": "h", "c": "rules", "q": "What is the penalty for defensive holding?", "a": ["5 yards and an automatic first down", "10 yards", "15 yards", "Loss of down"], "x": "Defensive holding is only 5 yards, but it comes with an automatic first down."}, {"t": "h", "c": "rules", "q": "How many points is a \"one-point safety\" worth?", "a": ["1", "2", "0", "3"], "x": "If the defense gets the ball on a try and is downed in its own end zone, the offense scores 1."}, {"t": "h", "c": "rules", "q": "If the defense returns a blocked extra point to the other end zone, how many points does it score?", "a": ["2", "1", "6", "0"], "x": "Since 2015, a defense that returns a try all the way scores 2 points."}, {"t": "h", "c": "rules", "q": "After a fair catch, a team may try a free kick. What can it score?", "a": ["A field goal (3 points)", "A touchdown", "A safety", "1 point"], "x": "A fair-catch kick is a free kick at the goal, worth 3 if it's good."}, {"t": "h", "c": "rules", "q": "How far must an onside kick travel before the kicking team can recover it?", "a": ["10 yards", "5 yards", "15 yards", "20 yards"], "x": "The ball must go 10 yards, or be touched by the receiving team, before the kickers can recover it."}, {"t": "h", "c": "rules", "q": "How is defensive pass interference penalized in the NFL?", "a": ["Ball at the spot of the foul, first down", "15 yards", "10 yards", "Loss of down"], "x": "Defensive pass interference is a spot foul with an automatic first down."}, {"t": "h", "c": "rules", "q": "How many replay challenges does a head coach start each game with?", "a": ["2", "1", "3", "4"], "x": "Coaches start with 2 challenges and earn a third if both succeed."}, {"t": "h", "c": "rules", "q": "After an administrative stoppage, the play clock is set to how many seconds?", "a": ["25", "40", "30", "15"], "x": "After stoppages like timeouts, the play clock starts at 25 seconds."}, {"t": "h", "c": "rules", "q": "What is the penalty for illegal contact by a defender?", "a": ["5 yards and an automatic first down", "10 yards", "15 yards", "Ball at the spot of the foul"], "x": "Illegal contact is 5 yards and an automatic first down."}, {"t": "h", "c": "rules", "q": "A quarterback commits intentional grounding while standing in his own end zone. What's the result?", "a": ["A safety", "A touchback", "Loss of down only", "A 10-yard penalty"], "x": "Intentional grounding from the end zone gives the defense a safety."}, {"t": "h", "c": "superbowl", "y": 1973, "q": "Who did the 1972 Dolphins beat in Super Bowl VII to finish 17-0?", "a": ["Washington", "Minnesota", "Dallas", "Oakland"], "x": "Miami beat Washington 14-7 to complete the perfect season."}, {"t": "h", "c": "superbowl", "y": 1969, "q": "Who was named MVP of Super Bowl III?", "a": ["Joe Namath", "Matt Snell", "Don Maynard", "Earl Morrall"], "x": "Namath guaranteed the win, then was named MVP."}, {"t": "h", "c": "superbowl", "y": 2021, "q": "Which team was the first to win a Super Bowl in its home stadium?", "a": ["Tampa Bay Buccaneers", "Los Angeles Rams", "Miami Dolphins", "Houston Texans"], "x": "Tampa Bay won Super Bowl LV at its home stadium in February 2021."}, {"t": "h", "c": "superbowl", "y": 1971, "q": "Who is the only Super Bowl MVP from the losing team?", "a": ["Chuck Howley", "Bob Lilly", "Roger Staubach", "Larry Brown"], "x": "Dallas linebacker Chuck Howley was MVP of Super Bowl V despite the loss."}, {"t": "h", "c": "superbowl", "y": 1967, "q": "Which stadium hosted Super Bowl I?", "a": ["Los Angeles Memorial Coliseum", "Rose Bowl", "Orange Bowl", "Tulane Stadium"], "x": "The Coliseum hosted Super Bowl I and later Super Bowl VII."}, {"t": "h", "c": "superbowl", "y": 1991, "q": "Whose 47-yard kick went wide right at the end of Super Bowl XXV?", "a": ["Scott Norwood", "Steve Christie", "Matt Bahr", "Pete Stoyanovich"], "x": "Norwood's miss let the Giants hold on to win 20-19."}, {"t": "h", "c": "superbowl", "y": 2000, "q": "Which team won Super Bowl XXXIV, ending on the \"One Yard Short\" tackle?", "a": ["St. Louis Rams", "Tennessee Titans", "Denver Broncos", "Baltimore Ravens"], "x": "Mike Jones tackled Kevin Dyson at the 1 on the final play."}, {"t": "h", "c": "superbowl", "y": 1981, "q": "Which team was the first wild card to win the Super Bowl?", "a": ["Oakland Raiders", "Denver Broncos", "Pittsburgh Steelers", "New York Giants"], "x": "The 1980 Raiders won Super Bowl XV as a wild card."}, {"t": "h", "c": "superbowl", "y": 1976, "q": "Who was the first wide receiver named Super Bowl MVP?", "a": ["Lynn Swann", "Fred Biletnikoff", "Jerry Rice", "John Stallworth"], "x": "Swann's acrobatic catches earned him MVP of Super Bowl X."}, {"t": "h", "c": "superbowl", "y": 1971, "q": "Which kicker won Super Bowl V with a late field goal?", "a": ["Jim O'Brien", "Mike Clark", "Jan Stenerud", "Garo Yepremian"], "x": "O'Brien's 32-yarder with 5 seconds left won it for Baltimore."}, {"t": "h", "c": "superbowl", "y": 2002, "q": "Whose field goal won Super Bowl XXXVI as time expired?", "a": ["Adam Vinatieri", "Stephen Gostkowski", "Jason Elam", "Mike Vanderjagt"], "x": "Vinatieri's 48-yarder beat the Rams for New England's first title."}, {"t": "h", "c": "superbowl", "y": 1990, "q": "Which team scored 55 points in Super Bowl XXIV, a Super Bowl record?", "a": ["San Francisco 49ers", "Dallas Cowboys", "Chicago Bears", "Washington"], "x": "San Francisco beat Denver 55-10."}, {"t": "h", "c": "franchise", "y": 1960, "q": "The Chargers played their first season, 1960, in which city?", "a": ["Los Angeles", "San Diego", "Anaheim", "Oakland"], "x": "The Chargers moved to San Diego in 1961 and back to LA in 2017."}, {"t": "h", "c": "franchise", "y": 1996, "q": "The Baltimore Ravens are named after a poem by which author?", "a": ["Edgar Allan Poe", "Walt Whitman", "Emily Dickinson", "Robert Frost"], "x": "Poe lived in Baltimore and is buried there."}, {"t": "h", "c": "franchise", "y": 1975, "q": "Before Arizona, the Cardinals played in Chicago and which other city?", "a": ["St. Louis", "Kansas City", "Memphis", "Houston"], "x": "The Cardinals played in St. Louis from 1960 to 1987."}, {"t": "h", "c": "franchise", "y": 2002, "q": "In which season did the Houston Texans play their first game?", "a": ["2002", "1999", "1995", "2005"], "x": "The Texans began play in 2002, filling the gap the Oilers left."}, {"t": "h", "c": "franchise", "y": 1995, "q": "Which team joined the NFL in 1995 alongside the Carolina Panthers?", "a": ["Jacksonville Jaguars", "Baltimore Ravens", "Houston Texans", "Cleveland Browns"], "x": "Jacksonville and Carolina both began play in 1995."}, {"t": "h", "c": "franchise", "y": 1990, "q": "Which conference did the Seattle Seahawks play in from 1977 to 2001?", "a": ["AFC", "NFC", "Both, alternating", "Neither"], "x": "Seattle played in the AFC West before moving to the NFC West in 2002."}, {"t": "h", "c": "franchise", "y": 1962, "q": "The Kansas City Chiefs began as which AFL team?", "a": ["Dallas Texans", "Houston Oilers", "Denver Broncos", "Buffalo Bills"], "x": "The Dallas Texans moved to Kansas City in 1963 and became the Chiefs."}, {"t": "h", "c": "franchise", "y": 1997, "q": "In 1997, the Tennessee Oilers played home games in which city before settling in Nashville?", "a": ["Memphis", "Knoxville", "Chattanooga", "Jackson"], "x": "The Oilers spent 1997 at Memphis's Liberty Bowl."}, {"t": "h", "c": "franchise", "y": 1999, "q": "In what year did the Cleveland Browns return as an expansion team?", "a": ["1999", "1996", "2002", "1995"], "x": "After three years without a team, Cleveland's Browns returned in 1999."}, {"t": "h", "c": "legends", "y": 1995, "q": "Which Hall of Famer played in both a Super Bowl and a World Series?", "a": ["Deion Sanders", "Bo Jackson", "Brian Jordan", "Jim Thorpe"], "x": "Deion Sanders played in the 1992 World Series and won two Super Bowls."}, {"t": "h", "c": "legends", "y": 1975, "q": "Which quarterback threw the original \"Hail Mary\" to Drew Pearson in 1975?", "a": ["Roger Staubach", "Danny White", "Craig Morton", "Don Meredith"], "x": "Staubach's playoff heave to Drew Pearson beat Minnesota."}, {"t": "h", "c": "legends", "y": 1965, "q": "How many NFL seasons did Jim Brown play before retiring at his peak?", "a": ["9", "7", "12", "14"], "x": "Brown retired after the 1965 season while still the league's top rusher."}, {"t": "h", "c": "legends", "y": 1967, "q": "Which defensive lineman is credited with coining the term \"sack\"?", "a": ["Deacon Jones", "Reggie White", "Lawrence Taylor", "Merlin Olsen"], "x": "Rams star Deacon Jones coined the term in the 1960s."}, {"t": "h", "c": "legends", "y": 2008, "q": "Which Hall of Fame tight end played for the Chiefs and then the Falcons?", "a": ["Tony Gonzalez", "Shannon Sharpe", "Antonio Gates", "Kellen Winslow"], "x": "Gonzalez played 12 seasons in Kansas City and 5 in Atlanta."}, {"t": "h", "c": "legends", "y": 1976, "q": "Which Raiders quarterback was nicknamed \"The Snake\"?", "a": ["Ken Stabler", "Daryle Lamonica", "Jim Plunkett", "George Blanda"], "x": "Ken Stabler led Oakland to a win in Super Bowl XI."}, {"t": "h", "c": "coaches", "y": 2007, "q": "Who was the first Black head coach to win a Super Bowl?", "a": ["Tony Dungy", "Mike Tomlin", "Lovie Smith", "Art Shell"], "x": "Dungy's Colts beat Lovie Smith's Bears in Super Bowl XLI."}, {"t": "h", "c": "moments", "y": 2000, "q": "The 2000 \"Music City Miracle\" kickoff return came against which team?", "a": ["Buffalo Bills", "Indianapolis Colts", "Jacksonville Jaguars", "Pittsburgh Steelers"], "x": "Tennessee beat Buffalo in the playoffs on a lateral during a kickoff return."}, {"t": "h", "c": "moments", "y": 1987, "q": "Which quarterback led \"The Drive\" in the January 1987 AFC Championship Game?", "a": ["John Elway", "Bernie Kosar", "Dan Marino", "Jim Kelly"], "x": "Elway drove Denver 98 yards to tie Cleveland, and the Broncos won in overtime."}, {"t": "h", "c": "moments", "y": 1972, "q": "The \"Immaculate Reception\" came against which opponent?", "a": ["Oakland Raiders", "Miami Dolphins", "Houston Oilers", "Dallas Cowboys"], "x": "Pittsburgh beat Oakland 13-7 in the 1972 playoffs."}, {"t": "h", "c": "moments", "y": 1968, "q": "Who won the 1968 \"Heidi Game\" after NBC cut away to a movie?", "a": ["Oakland Raiders", "New York Jets", "Kansas City Chiefs", "Miami Dolphins"], "x": "Oakland scored twice in the final minute to win 43-32."}, {"t": "h", "c": "moments", "y": 1967, "q": "Green Bay beat which team in the 1967 \"Ice Bowl\"?", "a": ["Dallas Cowboys", "Los Angeles Rams", "Chicago Bears", "Baltimore Colts"], "x": "Bart Starr's late quarterback sneak beat Dallas 21-17."}, {"t": "h", "c": "moments", "y": 1971, "q": "The longest game in NFL history, on Christmas Day 1971, was Miami against which team?", "a": ["Kansas City Chiefs", "Baltimore Colts", "Oakland Raiders", "Cleveland Browns"], "x": "Miami won 27-24 in double overtime."}, {"t": "h", "c": "moments", "y": 2002, "q": "The \"Tuck Rule\" playoff game in the snow was New England against which team?", "a": ["Oakland Raiders", "New York Jets", "Pittsburgh Steelers", "Tennessee Titans"], "x": "A Brady fumble was ruled an incomplete pass, and New England won in overtime."}, {"t": "h", "c": "moments", "y": 1978, "q": "Which Eagles player scored on the 1978 \"Miracle at the Meadowlands\"?", "a": ["Herm Edwards", "Ron Jaworski", "Wilbert Montgomery", "Bill Bergey"], "x": "Edwards returned a botched Giants handoff for the winning touchdown."}, {"t": "h", "c": "moments", "y": 1978, "q": "The Raiders' 1978 \"Holy Roller\" play beat which team?", "a": ["San Diego Chargers", "Denver Broncos", "Kansas City Chiefs", "Seattle Seahawks"], "x": "Oakland fumbled the ball forward into the end zone, which led to a rule change."}, {"t": "h", "c": "moments", "y": 2018, "q": "Who caught the touchdown pass on the \"Philly Special\"?", "a": ["Nick Foles", "Trey Burton", "Corey Clement", "Zach Ertz"], "x": "Tight end Trey Burton threw it to quarterback Nick Foles."}, {"t": "h", "c": "records", "y": 1960, "q": "Johnny Unitas threw a touchdown pass in how many straight games, a record for decades?", "a": ["47", "32", "54", "39"], "x": "Unitas's streak ran from 1956 to 1960; Drew Brees broke it in 2012."}, {"t": "h", "c": "records", "y": 1995, "q": "Which coach has the most wins in NFL history?", "a": ["Don Shula", "George Halas", "Bill Belichick", "Tom Landry"], "x": "Don Shula won 347 games, including playoffs."}, {"t": "h", "c": "records", "y": 2008, "q": "Which team was the first to go 0-16 in a season?", "a": ["Detroit Lions", "Cleveland Browns", "Tampa Bay Buccaneers", "Houston Texans"], "x": "The 2008 Lions were first; the 2017 Browns were second."}, {"t": "h", "c": "records", "y": 2007, "q": "Who set the NFL single-game rushing record of 296 yards in 2007?", "a": ["Adrian Peterson", "Jamal Lewis", "Jerome Harrison", "Corey Dillon"], "x": "Peterson did it as a rookie against San Diego."}, {"t": "h", "c": "records", "y": 2010, "q": "Brett Favre's record streak of consecutive regular-season starts at QB reached how many?", "a": ["297", "250", "187", "342"], "x": "Favre started 297 straight regular-season games from 1992 to 2010."}, {"t": "h", "c": "records", "y": 1952, "q": "\"Night Train\" Lane set the single-season interceptions record in 1952. How many?", "a": ["14", "11", "12", "16"], "x": "Lane picked off 14 passes as a Rams rookie, a record that still stands."}, {"t": "h", "c": "records", "y": 2003, "q": "Who holds the NFL record for career sacks?", "a": ["Bruce Smith", "Reggie White", "Kevin Greene", "Julius Peppers"], "x": "Bruce Smith finished with 200 sacks, the most since sacks became official in 1982."}, {"t": "h", "c": "records", "y": 1979, "q": "Who holds the NFL record for career interceptions?", "a": ["Paul Krause", "Emlen Tunnell", "Rod Woodson", "Ed Reed"], "x": "Krause had 81 interceptions with Washington and Minnesota."}, {"t": "h", "c": "records", "y": 2019, "q": "Who has scored the most points in NFL history?", "a": ["Adam Vinatieri", "Morten Andersen", "Gary Anderson", "Jason Hanson"], "x": "Kicker Adam Vinatieri scored 2,673 points over 24 seasons."}, {"t": "h", "c": "coaches", "y": 2000, "q": "Tom Brady was drafted with which overall pick in 2000?", "a": ["199", "99", "150", "247"], "x": "Brady was a sixth-round pick, No. 199 overall."}, {"t": "h", "c": "coaches", "y": 1936, "q": "Who was the first player ever selected in an NFL Draft, in 1936?", "a": ["Jay Berwanger", "Sammy Baugh", "Don Hutson", "Byron White"], "x": "Berwanger, the first Heisman winner, never played in the NFL."}, {"t": "h", "c": "coaches", "y": 1985, "q": "Who was the 1985 Bears' defensive coordinator behind the \"46\" defense?", "a": ["Buddy Ryan", "Mike Ditka", "Dick LeBeau", "Bud Carson"], "x": "Buddy Ryan's 46 defense powered the Bears' title run."}, {"t": "h", "c": "coaches", "y": 1985, "q": "Bill Walsh popularized which offensive system?", "a": ["The West Coast offense", "The run and shoot", "Air Coryell", "The Wing T"], "x": "Walsh's short-passing West Coast offense powered the 49ers' dynasty."}, {"t": "h", "c": "coaches", "y": 1969, "q": "Which team did Vince Lombardi coach after leaving Green Bay?", "a": ["Washington", "New York Giants", "Chicago Bears", "Philadelphia Eagles"], "x": "Lombardi coached Washington in 1969, his final season."}, {"t": "h", "c": "coaches", "y": 1988, "q": "Who was the Dallas Cowboys' head coach for their first 29 seasons?", "a": ["Tom Landry", "Jimmy Johnson", "Barry Switzer", "Bill Parcells"], "x": "Landry coached Dallas from 1960 through 1988."}, {"t": "h", "c": "coaches", "y": 1983, "q": "Which team drafted John Elway No. 1 overall in 1983 before trading him?", "a": ["Baltimore Colts", "Denver Broncos", "San Diego Chargers", "New York Jets"], "x": "Elway refused to play for Baltimore and was traded to Denver."}, {"t": "h", "c": "coaches", "y": 2000, "q": "Who coached the \"Greatest Show on Turf\" Rams to their Super Bowl XXXIV win?", "a": ["Dick Vermeil", "Mike Martz", "Jeff Fisher", "Bill Walsh"], "x": "Dick Vermeil won the title and stepped away right after it."}, {"t": "e", "c": "college", "y": 1935, "q": "Which trophy goes to college football's most outstanding player each season?", "a": ["The Heisman Trophy", "The Vince Lombardi Trophy", "The Stanley Cup", "The Larry O'Brien Trophy"], "x": "The Heisman Trophy has been awarded every year since 1935.", "p": "2026-11-02"}, {"t": "e", "c": "college", "y": 1902, "q": "Which bowl game, first played in 1902, is called \"The Granddaddy of Them All\"?", "a": ["Rose Bowl", "Orange Bowl", "Sugar Bowl", "Cotton Bowl"], "x": "The Rose Bowl in Pasadena is college football's oldest bowl game.", "p": "2026-11-02"}, {"t": "e", "c": "college", "y": 1890, "q": "Army's biggest rivalry game, first played in 1890, is against which academy?", "a": ["Navy", "Air Force", "Coast Guard", "Merchant Marine"], "x": "The Army-Navy Game was first played in 1890.", "p": "2026-11-02"}, {"t": "e", "c": "college", "q": "The annual Ohio State vs. Michigan game is often called what?", "a": ["The Game", "The Iron Bowl", "The Red River Showdown", "The Holy War"], "x": "Ohio State and Michigan have played \"The Game\" since 1897.", "p": "2026-11-02"}, {"t": "e", "c": "college", "q": "The \"Iron Bowl\" is the rivalry between Alabama and which school?", "a": ["Auburn", "LSU", "Tennessee", "Georgia"], "x": "The Iron Bowl takes its name from Birmingham's history as an iron and steel city.", "p": "2026-11-02"}, {"t": "e", "c": "college", "y": 1869, "q": "Which two schools played what's considered the first college football game, in 1869?", "a": ["Rutgers and Princeton", "Harvard and Yale", "Army and Navy", "Michigan and Ohio State"], "x": "Rutgers won that first game, played on November 6, 1869.", "p": "2026-11-02"}, {"t": "e", "c": "college", "y": 1927, "q": "What is Notre Dame's athletic nickname?", "a": ["Fighting Irish", "Wolverines", "Trojans", "Buckeyes"], "x": "Notre Dame officially adopted \"Fighting Irish\" in 1927.", "p": "2026-11-02"}, {"t": "e", "c": "college", "q": "Which school's teams are called the Crimson Tide?", "a": ["Alabama", "Oklahoma", "Ohio State", "Georgia"], "x": "Alabama's Crimson Tide nickname dates to the early 1900s.", "p": "2026-11-02"}, {"t": "e", "c": "college", "q": "Which school plays its home games at \"The Big House\"?", "a": ["Michigan", "Penn State", "Ohio State", "Tennessee"], "x": "Michigan Stadium is the largest stadium in the United States.", "p": "2026-11-02"}, {"t": "e", "c": "college", "y": 1922, "q": "\"The Horseshoe\" is the nickname of which school's stadium?", "a": ["Ohio State", "Michigan", "Notre Dame", "Texas"], "x": "Ohio Stadium, nicknamed for its shape, opened in 1922.", "p": "2026-11-02"}, {"t": "e", "c": "college", "y": 1992, "q": "Which college team plays its home games at \"The Swamp\"?", "a": ["Florida", "LSU", "Miami", "Georgia"], "x": "Steve Spurrier coined the nickname for Florida's stadium in 1992.", "p": "2026-11-02"}, {"t": "e", "c": "college", "y": 1986, "q": "What color is Boise State's famous home field?", "a": ["Blue", "Orange", "Green", "Black"], "x": "Boise State installed its blue turf in 1986.", "p": "2026-11-02"}, {"t": "e", "c": "college", "q": "College football postseason games like the Rose and Orange are known as what?", "a": ["Bowl games", "Finals", "Cup games", "Series games"], "x": "The name comes from Pasadena's bowl-shaped Rose Bowl stadium.", "p": "2026-11-02"}, {"t": "e", "c": "college", "q": "Which school's fans do the \"Gator Chomp\"?", "a": ["Florida", "Florida State", "Miami", "Central Florida"], "x": "Florida fans chomp with their arms to mimic a gator's jaws.", "p": "2026-11-02"}, {"t": "e", "c": "college", "q": "Which major bowl game is played in the Miami area?", "a": ["Orange Bowl", "Sugar Bowl", "Cotton Bowl", "Fiesta Bowl"], "x": "The Orange Bowl has been played in the Miami area since 1935.", "p": "2026-11-02"}, {"t": "e", "c": "college", "q": "In college football, what is a \"walk-on\"?", "a": ["A player who joins without an athletic scholarship", "A transfer student", "A team captain", "A backup kicker"], "x": "Walk-ons earn their roster spots without a scholarship offer.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "How many points is a successful extra-point kick worth?", "a": ["1", "2", "3", "6"], "x": "An extra-point kick after a touchdown is worth 1 point.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "What is it called when a defender catches a pass meant for the offense?", "a": ["An interception", "A sack", "A fumble", "A safety"], "x": "An interception gives the ball to the defense.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "What is it called when a ball carrier loses the ball before he's down?", "a": ["A fumble", "An interception", "A sack", "A touchback"], "x": "Either team can recover a fumble.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "Who catches the snap and sets the ball down for a field goal attempt?", "a": ["The holder", "The punter", "The long snapper", "The kicker"], "x": "The holder places the ball so the placekicker can kick it.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "How many yards deep is each end zone?", "a": ["10", "5", "15", "20"], "x": "Each end zone is 10 yards deep.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "When does the two-minute warning happen?", "a": ["With 2:00 left in each half", "With 2:00 left in every quarter", "With 5:00 left in the game", "With 1:00 left in each half"], "x": "The clock stops automatically at 2:00 of the second and fourth quarters.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "What is a \"pick-six\"?", "a": ["An interception returned for a touchdown", "A sack for a safety", "Six straight completions", "A blocked punt for a touchdown"], "x": "A pick-six is an interception the defense returns for 6 points.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "What is it called when the QB takes the snap and kneels to run out the clock?", "a": ["A kneel-down", "A spike", "A sneak", "A draw"], "x": "Teams with a late lead kneel to keep the clock running.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "What is it called when a QB throws the ball straight into the ground to stop the clock?", "a": ["A spike", "A kneel-down", "A sneak", "A punt"], "x": "A spike is an incomplete pass that stops the clock.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "How does a referee signal a touchdown?", "a": ["Both arms straight up", "Arms crossed over the chest", "One arm pointing forward", "Hands on hips"], "x": "Both arms raised straight up signals a touchdown or a successful kick.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "What is a play called where a runner hands off to a teammate going the opposite way?", "a": ["A reverse", "A sweep", "A draw", "A screen"], "x": "A reverse flips the direction of the play to fool the defense.", "p": "2026-11-02"}, {"t": "e", "c": "rules", "q": "What is a short pass to a back behind the line, with blockers in front of him, called?", "a": ["A screen pass", "A Hail Mary", "A fade", "A slant"], "x": "A screen pass lets linemen release downfield to block.", "p": "2026-11-02"}, {"t": "e", "c": "superbowl", "y": 1969, "q": "Which team did the Jets beat in Super Bowl III?", "a": ["Baltimore Colts", "Kansas City Chiefs", "Oakland Raiders", "Dallas Cowboys"], "x": "The Jets beat the Baltimore Colts 16-7 in a huge upset.", "p": "2026-11-02"}, {"t": "e", "c": "superbowl", "q": "Besides the trophy, what do players on the championship team traditionally receive?", "a": ["Championship rings", "Gold medals", "Jackets", "Belts"], "x": "Each player and coach on the winning team gets a championship ring.", "p": "2026-11-02"}, {"t": "e", "c": "superbowl", "y": 1989, "q": "Which team won Super Bowl XXIII on a late Joe Montana touchdown pass to John Taylor?", "a": ["San Francisco 49ers", "Cincinnati Bengals", "Denver Broncos", "Miami Dolphins"], "x": "San Francisco beat Cincinnati 20-16.", "p": "2026-11-02"}, {"t": "e", "c": "superbowl", "y": 2014, "q": "Which team won Super Bowl XLVIII 43-8?", "a": ["Seattle Seahawks", "Denver Broncos", "New England Patriots", "San Francisco 49ers"], "x": "Seattle's defense overwhelmed Denver for the franchise's first title.", "p": "2026-11-02"}, {"t": "e", "c": "franchise", "q": "Which NFL team's helmet famously has no logo?", "a": ["Cleveland Browns", "Pittsburgh Steelers", "Chicago Bears", "Las Vegas Raiders"], "x": "The Browns' plain orange helmet has no logo on it.", "p": "2026-11-02"}, {"t": "e", "c": "franchise", "q": "Which city is home to the Bills?", "a": ["Buffalo", "Boston", "Baltimore", "Birmingham"], "x": "The Bills play in Orchard Park, just outside Buffalo.", "p": "2026-11-02"}, {"t": "e", "c": "franchise", "q": "The Dallas Cowboys play their home games in which Texas city?", "a": ["Arlington", "Houston", "Austin", "Irving"], "x": "The Cowboys moved to Arlington in 2009, after decades in Irving.", "p": "2026-11-02"}, {"t": "e", "c": "franchise", "q": "In which state do the Jets and Giants play their home games?", "a": ["New Jersey", "New York", "Connecticut", "Pennsylvania"], "x": "Both teams play at MetLife Stadium in East Rutherford, New Jersey.", "p": "2026-11-02"}, {"t": "e", "c": "franchise", "q": "Which NFL team is based in Charlotte?", "a": ["Carolina Panthers", "Atlanta Falcons", "Tennessee Titans", "Jacksonville Jaguars"], "x": "The Panthers have played in Charlotte since 1996.", "p": "2026-11-02"}, {"t": "e", "c": "franchise", "q": "In which city do the Titans play?", "a": ["Nashville", "Memphis", "Knoxville", "Houston"], "x": "The franchise has played in Nashville since 1998 and became the Titans in 1999.", "p": "2026-11-02"}, {"t": "e", "c": "franchise", "y": 1975, "q": "Which team's fans wave \"Terrible Towels\"?", "a": ["Pittsburgh Steelers", "Cleveland Browns", "Baltimore Ravens", "Cincinnati Bengals"], "x": "Broadcaster Myron Cope created the Terrible Towel in 1975.", "p": "2026-11-02"}, {"t": "e", "c": "franchise", "q": "Which team plays its home games at Soldier Field?", "a": ["Chicago Bears", "Green Bay Packers", "Detroit Lions", "Minnesota Vikings"], "x": "Soldier Field sits on Chicago's lakefront.", "p": "2026-11-02"}, {"t": "e", "c": "legends", "y": 1975, "q": "Which Hall of Fame QB was nicknamed \"Captain Comeback\"?", "a": ["Roger Staubach", "Terry Bradshaw", "Bob Griese", "Fran Tarkenton"], "x": "Staubach led many late comebacks for Dallas in the 1970s.", "p": "2026-11-02"}, {"t": "e", "c": "legends", "y": 2012, "q": "Which Hall of Fame receiver was nicknamed \"Megatron\"?", "a": ["Calvin Johnson", "Randy Moss", "Terrell Owens", "Andre Johnson"], "x": "Calvin Johnson starred for Detroit from 2007 to 2015.", "p": "2026-11-02"}, {"t": "e", "c": "legends", "y": 2014, "q": "Which running back was nicknamed \"Beast Mode\"?", "a": ["Marshawn Lynch", "Jerome Bettis", "Earl Campbell", "Adrian Peterson"], "x": "Marshawn Lynch powered Seattle's offense in the 2010s.", "p": "2026-11-02"}, {"t": "e", "c": "legends", "y": 1970, "q": "Dick Butkus played his entire career for which team?", "a": ["Chicago Bears", "Green Bay Packers", "Detroit Lions", "New York Giants"], "x": "Butkus was a ferocious middle linebacker for Chicago from 1965 to 1973.", "p": "2026-11-02"}, {"t": "e", "c": "legends", "y": 1978, "q": "Which Hall of Fame QB threw to Lynn Swann and John Stallworth?", "a": ["Terry Bradshaw", "Roger Staubach", "Ken Stabler", "Bob Griese"], "x": "Bradshaw won four Super Bowls with Pittsburgh.", "p": "2026-11-02"}, {"t": "e", "c": "legends", "y": 1975, "q": "\"The Steel Curtain\" was which team's famous defense?", "a": ["Pittsburgh Steelers", "Minnesota Vikings", "Los Angeles Rams", "Chicago Bears"], "x": "Pittsburgh's 1970s defense powered four Super Bowl wins.", "p": "2026-11-02"}, {"t": "e", "c": "legends", "y": 1960, "q": "Which legendary quarterback was known as \"Johnny U\"?", "a": ["Johnny Unitas", "John Elway", "John Brodie", "Johnny Lujack"], "x": "Johnny Unitas starred for the Baltimore Colts.", "p": "2026-11-02"}, {"t": "e", "c": "legends", "y": 1992, "q": "Which Hall of Fame QB led the Bills to four straight Super Bowls?", "a": ["Jim Kelly", "Doug Flutie", "Frank Reich", "Joe Ferguson"], "x": "Kelly ran Buffalo's fast-paced offense in the early 1990s.", "p": "2026-11-02"}, {"t": "e", "c": "records", "y": 2023, "q": "Who has won the most Super Bowls as a player?", "a": ["Tom Brady", "Charles Haley", "Joe Montana", "Terry Bradshaw"], "x": "Brady won seven: six with New England and one with Tampa Bay.", "p": "2026-11-02"}, {"t": "e", "c": "coaches", "y": 1986, "q": "Who coached the Bears to their Super Bowl win after the 1985 season?", "a": ["Mike Ditka", "Buddy Ryan", "George Halas", "Mike Singletary"], "x": "Ditka, a former Bears tight end, coached Chicago from 1982 to 1992.", "p": "2026-11-02"}, {"t": "e", "c": "coaches", "y": 1940, "q": "George Halas founded and coached which team?", "a": ["Chicago Bears", "Green Bay Packers", "Chicago Cardinals", "Detroit Lions"], "x": "Halas was the Bears' founder, owner and longtime coach.", "p": "2026-11-02"}, {"t": "e", "c": "moments", "y": 1958, "q": "In 1958's \"Greatest Game Ever Played,\" the Colts beat which team in overtime?", "a": ["New York Giants", "Cleveland Browns", "Chicago Bears", "Detroit Lions"], "x": "Alan Ameche's 1-yard run won the NFL title in sudden death.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1979, "q": "Which coach won six national titles at Alabama between 1961 and 1979?", "a": ["Paul \"Bear\" Bryant", "Nick Saban", "Gene Stallings", "Frank Thomas"], "x": "Bryant's last two Alabama titles came in 1978 and 1979.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1928, "q": "Which Notre Dame coach gave the famous \"win one for the Gipper\" speech?", "a": ["Knute Rockne", "Frank Leahy", "Ara Parseghian", "Lou Holtz"], "x": "Rockne invoked George Gipp before Notre Dame beat Army in 1928.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1975, "q": "Archie Griffin is the only two-time Heisman winner. Which school did he play for?", "a": ["Ohio State", "Michigan", "Penn State", "USC"], "x": "Griffin won the Heisman in 1974 and 1975.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1984, "q": "Doug Flutie's famous 1984 Hail Mary beat Miami. Which school did he play for?", "a": ["Boston College", "Navy", "Syracuse", "Notre Dame"], "x": "Flutie's last-second heave won it 47-45, and he won the Heisman that season.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1982, "q": "Cal's five-lateral kickoff return in 1982, known as \"The Play,\" came against which team?", "a": ["Stanford", "USC", "UCLA", "Oregon"], "x": "Cal scored through Stanford's band on the final play to win 25-20.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1935, "q": "In which city is the Sugar Bowl played?", "a": ["New Orleans", "Miami", "Dallas", "Houston"], "x": "The Sugar Bowl was first played in New Orleans on New Year's Day 1935.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1924, "q": "Notre Dame's famous \"Four Horsemen\" backfield played in which decade?", "a": ["1920s", "1940s", "1960s", "1900s"], "x": "Sportswriter Grantland Rice gave them the name in 1924.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1956, "q": "A line of white bulldogs named Uga has been which school's mascot?", "a": ["Georgia", "Yale", "Mississippi State", "Butler"], "x": "An Uga has served as Georgia's mascot since 1956.", "p": "2026-11-02"}, {"t": "m", "c": "college", "q": "The \"Red River\" rivalry is played between which two schools?", "a": ["Texas and Oklahoma", "Texas and Texas A&M", "Oklahoma and Oklahoma State", "Arkansas and Texas"], "x": "Texas and Oklahoma meet in Dallas during the State Fair of Texas.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 2007, "q": "Tim Tebow won the 2007 Heisman Trophy at which school?", "a": ["Florida", "Florida State", "Miami", "Auburn"], "x": "Tebow was the first sophomore to win the Heisman.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1985, "q": "Bo Jackson won the 1985 Heisman Trophy at which school?", "a": ["Auburn", "Alabama", "LSU", "Georgia"], "x": "Jackson later starred in both the NFL and Major League Baseball.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1930, "q": "Before the trophy was named for him, John Heisman was best known as what?", "a": ["A college football coach", "A sportswriter", "An NFL team owner", "A stadium architect"], "x": "Heisman coached at Georgia Tech and several other schools.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 2006, "q": "Vince Young's Texas beat which team in the January 2006 Rose Bowl for the national title?", "a": ["USC", "Ohio State", "Michigan", "Oklahoma"], "x": "Young's late touchdown run won it 41-38.", "p": "2026-11-02"}, {"t": "m", "c": "college", "q": "Which school has the most all-time wins in major college football?", "a": ["Michigan", "Ohio State", "Alabama", "Notre Dame"], "x": "Michigan became the first program to reach 1,000 wins, in 2023.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 2005, "q": "Before the College Football Playoff, which system matched the top two teams from 1998 to 2013?", "a": ["The BCS", "The Bowl Alliance", "The Bowl Coalition", "The AP Poll"], "x": "The Bowl Championship Series ran from the 1998 season through 2013.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 2013, "q": "In the 2013 \"Kick Six,\" Auburn returned a missed field goal 109 yards to beat which team?", "a": ["Alabama", "Georgia", "LSU", "Florida"], "x": "Chris Davis scored as time expired to win the Iron Bowl 34-28.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1988, "q": "Barry Sanders won the 1988 Heisman Trophy at which school?", "a": ["Oklahoma State", "Oklahoma", "Nebraska", "Texas"], "x": "Sanders had one of the greatest seasons in college history in 1988.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1963, "q": "Roger Staubach and Joe Bellino both won the Heisman at which school?", "a": ["Navy", "Army", "Air Force", "Boston College"], "x": "Bellino won in 1960 and Staubach in 1963.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1997, "q": "Which coach led Nebraska to national titles in the 1994, 1995 and 1997 seasons?", "a": ["Tom Osborne", "Bob Devaney", "Frank Solich", "Barry Switzer"], "x": "Osborne coached Nebraska for 25 seasons.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1966, "q": "Steve Spurrier won the 1966 Heisman as a quarterback at which school?", "a": ["Florida", "South Carolina", "Duke", "Georgia"], "x": "Spurrier later coached Florida to the 1996 national title.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1951, "q": "Which college all-star game for seniors is played each winter in Mobile, Alabama?", "a": ["The Senior Bowl", "The Pro Bowl", "The Rose Bowl", "The Peach Bowl"], "x": "The Senior Bowl has been played in Mobile since 1951.", "p": "2026-11-02"}, {"t": "m", "c": "college", "q": "\"Death Valley\" is the nickname for the stadiums of LSU and which other school?", "a": ["Clemson", "Auburn", "Georgia", "Florida"], "x": "Both LSU's Tiger Stadium and Clemson's Memorial Stadium go by Death Valley.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1993, "q": "Heisman winner Charlie Ward, who later played in the NBA, starred at which school?", "a": ["Florida State", "Miami", "Florida", "Georgia"], "x": "Ward won the 1993 Heisman and played point guard for the New York Knicks.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1991, "q": "Desmond Howard struck his famous Heisman pose in 1991 playing for which school?", "a": ["Michigan", "Notre Dame", "Ohio State", "Florida State"], "x": "Howard posed after a punt return touchdown against Ohio State.", "p": "2026-11-02"}, {"t": "m", "c": "college", "q": "Which school is nicknamed \"Linebacker U\"?", "a": ["Penn State", "Alabama", "Ohio State", "Miami"], "x": "Penn State has produced a long line of star linebackers.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1969, "q": "Darrell Royal coached which school to national titles in the 1960s?", "a": ["Texas", "Oklahoma", "Arkansas", "TCU"], "x": "Royal's Texas teams won titles in 1963 and 1969, plus a share in 1970.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1912, "q": "Jim Thorpe starred in college for which school?", "a": ["Carlisle Indian Industrial School", "Army", "Harvard", "Penn State"], "x": "Thorpe led Carlisle to a famous 27-6 win over Army in 1912.", "p": "2026-11-02"}, {"t": "m", "c": "college", "y": 1998, "q": "Which school won the first BCS national championship game, after the 1998 season?", "a": ["Tennessee", "Florida State", "Nebraska", "Ohio State"], "x": "Tennessee beat Florida State 23-16 in the Fiesta Bowl.", "p": "2026-11-02"}, {"t": "m", "c": "rules", "q": "How many yards is a defensive offside penalty?", "a": ["5", "10", "15", "2"], "x": "Offside costs the defense 5 yards.", "p": "2026-11-02"}, {"t": "m", "c": "rules", "q": "Which official leads the crew and wears a white hat?", "a": ["The referee", "The umpire", "The line judge", "The back judge"], "x": "The referee wears a white cap; the other officials wear black.", "p": "2026-11-02"}, {"t": "m", "c": "rules", "q": "How many on-field officials work a standard NFL game?", "a": ["7", "5", "6", "8"], "x": "An NFL officiating crew has 7 members on the field.", "p": "2026-11-02"}, {"t": "m", "c": "rules", "q": "What is the space between the two lines of scrimmage, the length of the ball, called?", "a": ["The neutral zone", "The pocket", "The red zone", "The backfield"], "x": "No player may be in the neutral zone at the snap except the center.", "p": "2026-11-02"}, {"t": "m", "c": "rules", "q": "How high is the crossbar on a goalpost?", "a": ["10 feet", "8 feet", "12 feet", "15 feet"], "x": "The crossbar sits 10 feet above the ground.", "p": "2026-11-02"}, {"t": "m", "c": "rules", "y": 1974, "q": "Where are NFL goalposts located?", "a": ["At the back of the end zone", "On the goal line", "5 yards into the end zone", "At the 10-yard line"], "x": "The NFL moved its goalposts from the goal line to the end line in 1974.", "p": "2026-11-02"}, {"t": "m", "c": "rules", "q": "In college football, how many feet must a receiver get down in bounds for a catch?", "a": ["1", "2", "3", "None"], "x": "College requires one foot in bounds; the NFL requires two.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 1996, "q": "Which team won Super Bowl XXX, its third title in four seasons?", "a": ["Dallas Cowboys", "Pittsburgh Steelers", "San Francisco 49ers", "Denver Broncos"], "x": "Dallas beat Pittsburgh 27-17.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 2015, "q": "Which team won Super Bowl XLIX after a goal-line interception by Malcolm Butler?", "a": ["New England Patriots", "Seattle Seahawks", "Green Bay Packers", "Denver Broncos"], "x": "Butler's late interception sealed New England's 28-24 win.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 2017, "q": "In Super Bowl LI, the first to go to overtime, New England came back from 28-3 against which team?", "a": ["Atlanta Falcons", "Seattle Seahawks", "Philadelphia Eagles", "Los Angeles Rams"], "x": "New England won 34-28 in overtime.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 2010, "q": "Which team won Super Bowl XLIV after a surprise onside kick to start the second half?", "a": ["New Orleans Saints", "Indianapolis Colts", "Arizona Cardinals", "Pittsburgh Steelers"], "x": "New Orleans beat Indianapolis 31-17 for its first title.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 2001, "q": "Which team won Super Bowl XXXV behind a dominant defense led by Ray Lewis?", "a": ["Baltimore Ravens", "Tampa Bay Buccaneers", "New York Giants", "Pittsburgh Steelers"], "x": "Baltimore beat the Giants 34-7, and Lewis was named MVP.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 1977, "q": "Which team lost four Super Bowls in the 1970s?", "a": ["Minnesota Vikings", "Dallas Cowboys", "Los Angeles Rams", "Washington"], "x": "Minnesota lost Super Bowls IV, VIII, IX and XI.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 1972, "q": "Which team won Super Bowl VI, a year after losing Super Bowl V?", "a": ["Dallas Cowboys", "Baltimore Colts", "Miami Dolphins", "Minnesota Vikings"], "x": "Dallas beat Miami 24-3 for its first title.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 1994, "q": "Which team beat the Bills in both Super Bowl XXVII and Super Bowl XXVIII?", "a": ["Dallas Cowboys", "Washington", "New York Giants", "San Francisco 49ers"], "x": "Dallas won both rematches by double digits.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 2003, "q": "Which team won Super Bowl XXXVII, beating the Raiders?", "a": ["Tampa Bay Buccaneers", "New England Patriots", "St. Louis Rams", "Philadelphia Eagles"], "x": "Tampa Bay won 48-21 for its first title.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 2006, "q": "Which team won Super Bowl XL in Detroit?", "a": ["Pittsburgh Steelers", "Seattle Seahawks", "Indianapolis Colts", "New England Patriots"], "x": "Pittsburgh beat Seattle 21-10.", "p": "2026-11-02"}, {"t": "m", "c": "superbowl", "y": 2013, "q": "Super Bowl XLVII was called the \"Harbaugh Bowl.\" Which team won it?", "a": ["Baltimore Ravens", "San Francisco 49ers", "New England Patriots", "Denver Broncos"], "x": "John Harbaugh's Ravens beat his brother Jim's 49ers 34-31.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "y": 1962, "q": "Which team's helmet logo appears on only one side?", "a": ["Pittsburgh Steelers", "Cleveland Browns", "Green Bay Packers", "Dallas Cowboys"], "x": "The Steelers tried the logo on one side in 1962 and kept it that way.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "q": "Which team plays its home games at Arrowhead Stadium?", "a": ["Kansas City Chiefs", "Denver Broncos", "Las Vegas Raiders", "Los Angeles Chargers"], "x": "The Chiefs have played at Arrowhead since 1972.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "y": 1970, "q": "The New England Patriots were originally named after which city?", "a": ["Boston", "Hartford", "Providence", "Worcester"], "x": "They were the Boston Patriots until 1971.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "q": "The San Francisco 49ers are named after what?", "a": ["The 1849 California Gold Rush", "Their founding year, 1949", "A bridge", "A street address"], "x": "The \"forty-niners\" were the prospectors of the 1849 Gold Rush.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "y": 1919, "q": "The Packers are named after what?", "a": ["A meatpacking company that sponsored the team", "A moving company", "A river", "A railroad"], "x": "The Indian Packing Company paid for the team's first uniforms in 1919.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "q": "Which team plays in the NFC North with Chicago, Detroit and Green Bay?", "a": ["Minnesota Vikings", "St. Louis Rams", "Tampa Bay Buccaneers", "Cleveland Browns"], "x": "The four teams have been division rivals for decades.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "y": 1976, "q": "Which two teams joined the NFL as expansion teams in 1976?", "a": ["Seattle and Tampa Bay", "Jacksonville and Carolina", "Houston and Cleveland", "Atlanta and New Orleans"], "x": "The Seahawks and Buccaneers both began play in 1976.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "y": 1970, "q": "In which year did the AFL and NFL become one league?", "a": ["1970", "1966", "1967", "1972"], "x": "The leagues agreed to merge in 1966 and fully combined in 1970.", "p": "2026-11-02"}, {"t": "m", "c": "franchise", "q": "Which team's stadium sits on the shore of Lake Erie?", "a": ["Cleveland Browns", "Buffalo Bills", "Detroit Lions", "Chicago Bears"], "x": "The Browns' stadium is on Cleveland's lakefront.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1978, "q": "Which Hall of Fame running back was nicknamed \"The Tyler Rose\"?", "a": ["Earl Campbell", "Tony Dorsett", "Eric Dickerson", "Walter Payton"], "x": "Campbell grew up in Tyler, Texas, known for its rose gardens.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1925, "q": "Which early star was nicknamed \"The Galloping Ghost\"?", "a": ["Red Grange", "Bronko Nagurski", "Jim Thorpe", "Ernie Nevers"], "x": "Red Grange's 1925 signing with the Bears helped make pro football popular.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 2010, "q": "\"Revis Island\" described the coverage of which cornerback?", "a": ["Darrelle Revis", "Champ Bailey", "Ty Law", "Charles Woodson"], "x": "Revis could shut down a top receiver on his own.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1967, "q": "Merlin Olsen was part of which famous defensive line?", "a": ["The Fearsome Foursome", "The Purple People Eaters", "The Steel Curtain", "The New York Sack Exchange"], "x": "The Rams' Fearsome Foursome also included Deacon Jones.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1970, "q": "The \"Purple People Eaters\" defensive line played for which team?", "a": ["Minnesota Vikings", "Los Angeles Rams", "Pittsburgh Steelers", "Chicago Bears"], "x": "Minnesota's front four dominated in the late 1960s and 1970s.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1983, "q": "Which Washington running back was nicknamed \"The Diesel\"?", "a": ["John Riggins", "Larry Brown", "Earnest Byner", "George Rogers"], "x": "Riggins was MVP of Super Bowl XVII.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1965, "q": "Johnny Unitas played most of his career for which team?", "a": ["Baltimore Colts", "Pittsburgh Steelers", "San Diego Chargers", "New York Giants"], "x": "Unitas played 17 seasons in Baltimore.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 2007, "q": "Which receiver caught 23 touchdown passes for New England in 2007?", "a": ["Randy Moss", "Wes Welker", "Terrell Owens", "Chad Johnson"], "x": "Moss's 23 touchdown catches helped New England go 16-0.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1984, "q": "Which Rams running back ran for 2,105 yards in 1984?", "a": ["Eric Dickerson", "Marcus Allen", "Walter Payton", "Tony Dorsett"], "x": "Dickerson's 2,105 yards in 1984 set the NFL single-season rushing record.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1981, "q": "Which Hall of Fame QB starred in the Chargers' \"Air Coryell\" offense?", "a": ["Dan Fouts", "Dan Marino", "Jim Hart", "Ken Anderson"], "x": "Fouts led the league in passing yards four straight seasons.", "p": "2026-11-02"}, {"t": "m", "c": "legends", "y": 1985, "q": "Which Hall of Fame receiver starred for Seattle from 1976 to 1989 and later served in Congress?", "a": ["Steve Largent", "Steve Young", "Cris Collinsworth", "Charlie Joiner"], "x": "Largent retired holding several career receiving records.", "p": "2026-11-02"}, {"t": "m", "c": "moments", "y": 1993, "q": "The Bills' 1993 playoff comeback from 35-3 down came against which team?", "a": ["Houston Oilers", "Miami Dolphins", "Pittsburgh Steelers", "Kansas City Chiefs"], "x": "Backup QB Frank Reich led Buffalo to a 41-38 overtime win.", "p": "2026-11-02"}, {"t": "m", "c": "moments", "y": 1999, "q": "Steve Young's 1999 playoff winner known as \"The Catch II\" went to which receiver?", "a": ["Terrell Owens", "Jerry Rice", "J.J. Stokes", "Garrison Hearst"], "x": "Owens's catch with 3 seconds left beat Green Bay.", "p": "2026-11-02"}, {"t": "m", "c": "moments", "y": 2008, "q": "Before Super Bowl XLII, the Giants won the NFC title game in subzero cold at which stadium?", "a": ["Lambeau Field", "Soldier Field", "Giants Stadium", "Metrodome"], "x": "Lawrence Tynes kicked the winning field goal in overtime.", "p": "2026-11-02"}, {"t": "m", "c": "records", "q": "Who holds the NFL record for career passing yards?", "a": ["Tom Brady", "Drew Brees", "Peyton Manning", "Brett Favre"], "x": "Brady threw for more than 89,000 regular-season yards.", "p": "2026-11-02"}, {"t": "m", "c": "records", "q": "Who holds the NFL record for career rushing touchdowns?", "a": ["Emmitt Smith", "LaDainian Tomlinson", "Marcus Allen", "Walter Payton"], "x": "Emmitt Smith ran for 164 touchdowns.", "p": "2026-11-02"}, {"t": "m", "c": "records", "y": 2013, "q": "Which team scored 606 points in 2013, setting a single-season scoring record?", "a": ["Denver Broncos", "New England Patriots", "Green Bay Packers", "St. Louis Rams"], "x": "Peyton Manning's Broncos topped the 2007 Patriots' 589.", "p": "2026-11-02"}, {"t": "m", "c": "records", "y": 2013, "q": "Who threw 55 touchdown passes in 2013, setting a single-season record?", "a": ["Peyton Manning", "Tom Brady", "Drew Brees", "Aaron Rodgers"], "x": "Manning broke Brady's mark of 50 from 2007.", "p": "2026-11-02"}, {"t": "m", "c": "records", "y": 1976, "q": "Which expansion team went 0-14 in its first season, 1976?", "a": ["Tampa Bay Buccaneers", "Seattle Seahawks", "Atlanta Falcons", "New Orleans Saints"], "x": "Tampa Bay lost its first 26 games before finally winning in late 1977.", "p": "2026-11-02"}, {"t": "m", "c": "coaches", "y": 1989, "q": "Who coached the 49ers to three Super Bowl wins in the 1980s?", "a": ["Bill Walsh", "George Seifert", "Steve Mariucci", "Mike Holmgren"], "x": "Walsh won Super Bowls XVI, XIX and XXIII.", "p": "2026-11-02"}, {"t": "m", "c": "coaches", "y": 1991, "q": "Who coached the Giants to Super Bowl wins after the 1986 and 1990 seasons?", "a": ["Bill Parcells", "Tom Coughlin", "Bill Belichick", "Ray Handley"], "x": "Parcells later coached the Patriots, Jets and Cowboys.", "p": "2026-11-02"}, {"t": "m", "c": "coaches", "y": 1992, "q": "Which coach won three Super Bowls with three different starting QBs for Washington?", "a": ["Joe Gibbs", "George Allen", "Norv Turner", "Marty Schottenheimer"], "x": "Gibbs won with Joe Theismann, Doug Williams and Mark Rypien.", "p": "2026-11-02"}, {"t": "m", "c": "coaches", "y": 1946, "q": "Which coach was the Cleveland Browns' namesake?", "a": ["Paul Brown", "Blanton Collier", "Art Modell", "Otto Graham"], "x": "Paul Brown coached Cleveland from its first season in 1946.", "p": "2026-11-02"}, {"t": "m", "c": "coaches", "y": 1968, "q": "Paul Brown later founded which team?", "a": ["Cincinnati Bengals", "Baltimore Ravens", "Miami Dolphins", "Atlanta Falcons"], "x": "The Bengals began play in the AFL in 1968.", "p": "2026-11-02"}, {"t": "m", "c": "coaches", "y": 1970, "q": "Which QB did the Steelers take first overall in the 1970 draft?", "a": ["Terry Bradshaw", "Joe Greene", "Archie Manning", "Jim Plunkett"], "x": "Bradshaw came from Louisiana Tech.", "p": "2026-11-02"}, {"t": "m", "c": "coaches", "y": 1998, "q": "Before the NFL, Kurt Warner played in which indoor league?", "a": ["Arena Football League", "Canadian Football League", "USFL", "XFL"], "x": "Warner famously stocked grocery shelves before starring for the Iowa Barnstormers.", "p": "2026-11-02"}, {"t": "m", "c": "coaches", "y": 1992, "q": "Who succeeded Chuck Noll as the Steelers' head coach in 1992?", "a": ["Bill Cowher", "Mike Tomlin", "Tony Dungy", "Dick LeBeau"], "x": "Cowher coached Pittsburgh for 15 seasons and won Super Bowl XL.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1925, "q": "Notre Dame plays which school for the Jeweled Shillelagh trophy?", "a": ["USC", "Michigan", "Navy", "Purdue"], "x": "The Notre Dame-USC rivalry dates to 1926.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1916, "q": "Coached by John Heisman, which team won a 1916 game 222-0?", "a": ["Georgia Tech", "Georgia", "Clemson", "Tennessee"], "x": "Georgia Tech beat Cumberland 222-0, the most lopsided score in college history.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1961, "q": "Who became the first Black player to win the Heisman Trophy, in 1961?", "a": ["Ernie Davis", "Jim Brown", "Floyd Little", "John David Crow"], "x": "Davis, from Syracuse, died of leukemia before he could play in the NFL.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 2003, "q": "Which team ended Miami's 34-game winning streak in the January 2003 national title game?", "a": ["Ohio State", "Oklahoma", "Texas", "USC"], "x": "Ohio State won the Fiesta Bowl 31-24 in double overtime.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 2007, "q": "Boise State beat Oklahoma in the 2007 Fiesta Bowl with which trick play on the winning two-point try?", "a": ["The Statue of Liberty", "The flea flicker", "The fumblerooski", "The Wildcat"], "x": "Boise State won 43-42 in overtime.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 2015, "q": "Which school won the first College Football Playoff national championship game, in January 2015?", "a": ["Ohio State", "Oregon", "Alabama", "Florida State"], "x": "Ohio State beat Oregon 42-20.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1957, "q": "Who coached Oklahoma during its record 47-game winning streak in the 1950s?", "a": ["Bud Wilkinson", "Barry Switzer", "Bob Stoops", "Bennie Owen"], "x": "The streak ran from 1953 until Notre Dame ended it in 1957.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1989, "q": "Who won the 1989 Heisman Trophy at Houston, running the run-and-shoot offense?", "a": ["Andre Ware", "David Klingler", "Ty Detmer", "Gino Torretta"], "x": "Ware was the first Black quarterback to win the Heisman.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1990, "q": "Ty Detmer won the 1990 Heisman Trophy at which school?", "a": ["BYU", "Utah", "Houston", "Miami"], "x": "Detmer threw for more than 15,000 yards in his BYU career.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1945, "q": "Army's \"Mr. Inside\" was Doc Blanchard. Who was \"Mr. Outside\"?", "a": ["Glenn Davis", "Pete Dawkins", "Arnold Tucker", "Red Blaik"], "x": "Blanchard won the Heisman in 1945 and Davis in 1946.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1948, "q": "Doak Walker won the 1948 Heisman Trophy at which school?", "a": ["SMU", "TCU", "Texas", "Baylor"], "x": "The Cotton Bowl stadium was nicknamed \"The House That Doak Built.\"", "p": "2026-11-02"}, {"t": "h", "c": "college", "q": "In college overtime, teams alternate possessions starting from which yard line?", "a": ["The opponent's 25", "Midfield", "The opponent's 10", "The opponent's 35"], "x": "From the third overtime on, teams alternate two-point tries instead.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1971, "q": "Which two teams played college football's 1971 \"Game of the Century\"?", "a": ["Nebraska and Oklahoma", "Notre Dame and Michigan State", "Texas and Arkansas", "USC and UCLA"], "x": "Nebraska won 35-31 on Thanksgiving Day 1971.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1987, "q": "Which team beat Miami in the January 1987 Fiesta Bowl for the national title?", "a": ["Penn State", "Notre Dame", "Oklahoma", "Nebraska"], "x": "Penn State intercepted Vinny Testaverde five times to win 14-10.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1992, "q": "Which Miami quarterback won the 1992 Heisman Trophy?", "a": ["Gino Torretta", "Vinny Testaverde", "Bernie Kosar", "Ken Dorsey"], "x": "Testaverde had won for Miami six years earlier, in 1986.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1983, "q": "Who coached Miami to its first national title, in the 1983 season?", "a": ["Howard Schnellenberger", "Jimmy Johnson", "Dennis Erickson", "Butch Davis"], "x": "Miami upset Nebraska 31-30 in the Orange Bowl.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1972, "q": "Johnny Rodgers won the 1972 Heisman Trophy at which school?", "a": ["Nebraska", "Oklahoma", "USC", "Alabama"], "x": "Rodgers was a dangerous receiver and punt returner.", "p": "2026-11-02"}, {"t": "h", "c": "college", "y": 1971, "q": "Which Stanford quarterback won the 1970 Heisman and went first overall in the 1971 NFL Draft?", "a": ["Jim Plunkett", "Archie Manning", "Dan Pastorini", "John Elway"], "x": "Plunkett later won two Super Bowls with the Raiders.", "p": "2026-11-02"}, {"t": "h", "c": "rules", "q": "In the NFL, what is the penalty for offensive pass interference?", "a": ["10 yards", "5 yards", "15 yards", "Ball at the spot of the foul"], "x": "Offensive pass interference is a 10-yard penalty.", "p": "2026-11-02"}, {"t": "h", "c": "rules", "q": "Running into the kicker, as opposed to roughing him, is how many yards?", "a": ["5", "10", "15", "0"], "x": "Running into the kicker is 5 yards; roughing is 15 and a first down.", "p": "2026-11-02"}, {"t": "h", "c": "rules", "q": "What is a \"muff\"?", "a": ["Touching a kick without gaining possession", "A fumbled handoff", "A missed field goal", "A bad snap"], "x": "A muffed punt is a live ball that either team can recover.", "p": "2026-11-02"}, {"t": "h", "c": "rules", "y": 1979, "q": "On 4th down, who is the only offensive player who can recover and advance a fumble?", "a": ["The player who fumbled", "Any offensive player", "The quarterback", "No one"], "x": "The rule followed the 1978 \"Holy Roller\" and also applies after the two-minute warning.", "p": "2026-11-02"}, {"t": "h", "c": "rules", "q": "In the NFL playoffs, how long is each overtime period?", "a": ["15 minutes", "10 minutes", "5 minutes", "12 minutes"], "x": "Playoff overtime periods are a full 15 minutes.", "p": "2026-11-02"}, {"t": "h", "c": "rules", "q": "How far apart are the uprights on an NFL goalpost?", "a": ["18 feet, 6 inches", "20 feet", "23 feet, 4 inches", "15 feet"], "x": "The uprights are 18 feet, 6 inches apart.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1997, "q": "Who was the first special teams player named Super Bowl MVP?", "a": ["Desmond Howard", "Devin Hester", "Steve Tasker", "Ted Ginn Jr."], "x": "Howard's 99-yard kickoff return touchdown sealed Super Bowl XXXI for Green Bay.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1998, "q": "Who was MVP of Super Bowl XXXII after rushing for three touchdowns despite a migraine?", "a": ["Terrell Davis", "John Elway", "Shannon Sharpe", "Ed McCaffrey"], "x": "Davis led Denver past Green Bay 31-24.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1986, "q": "Which Bears defensive end was MVP of Super Bowl XX?", "a": ["Richard Dent", "William Perry", "Mike Singletary", "Dan Hampton"], "x": "Dent's pressure helped Chicago crush New England.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1981, "q": "Which Raiders quarterback was MVP of Super Bowl XV?", "a": ["Jim Plunkett", "Ken Stabler", "Daryle Lamonica", "Marc Wilson"], "x": "Plunkett threw three touchdowns against Philadelphia.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1988, "q": "Who was MVP of Super Bowl XXII after throwing four touchdowns in one quarter?", "a": ["Doug Williams", "Joe Theismann", "Mark Rypien", "Jay Schroeder"], "x": "Williams became the first Black quarterback to win a Super Bowl.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1978, "q": "Super Bowl XII was the first played indoors, in which stadium?", "a": ["Louisiana Superdome", "Houston Astrodome", "Pontiac Silverdome", "Kingdome"], "x": "Dallas beat Denver 27-10 in New Orleans.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1989, "q": "The 49ers beat which team in both Super Bowl XVI and Super Bowl XXIII?", "a": ["Cincinnati Bengals", "Miami Dolphins", "Denver Broncos", "San Diego Chargers"], "x": "San Francisco beat Cincinnati 26-21 and 20-16.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1970, "q": "Who coached the Chiefs to their win in Super Bowl IV?", "a": ["Hank Stram", "Marv Levy", "Lou Saban", "Weeb Ewbank"], "x": "Kansas City beat Minnesota 23-7.", "p": "2026-11-02"}, {"t": "h", "c": "superbowl", "y": 1992, "q": "Which Washington quarterback was MVP of Super Bowl XXVI?", "a": ["Mark Rypien", "Doug Williams", "Joe Theismann", "Gus Frerotte"], "x": "Washington beat Buffalo 37-24.", "p": "2026-11-02"}, {"t": "h", "c": "franchise", "y": 1934, "q": "Which franchise began as the Portsmouth Spartans?", "a": ["Detroit Lions", "Green Bay Packers", "Chicago Cardinals", "Los Angeles Rams"], "x": "The Spartans moved from Portsmouth, Ohio, to Detroit in 1934.", "p": "2026-11-02"}, {"t": "h", "c": "franchise", "y": 1937, "q": "Before first moving to Los Angeles in 1946, the Rams were based in which city?", "a": ["Cleveland", "St. Louis", "Chicago", "Detroit"], "x": "The Cleveland Rams moved to Los Angeles after winning the 1945 title.", "p": "2026-11-02"}, {"t": "h", "c": "franchise", "y": 1932, "q": "Washington's franchise began in 1932 as the Boston what?", "a": ["Braves", "Patriots", "Yanks", "Bulldogs"], "x": "The team moved from Boston to Washington in 1937.", "p": "2026-11-02"}, {"t": "h", "c": "franchise", "y": 1966, "q": "Which team joined the NFL as an expansion team in 1966?", "a": ["Atlanta Falcons", "New Orleans Saints", "Miami Dolphins", "Minnesota Vikings"], "x": "The Saints followed in 1967; Miami joined the AFL in 1966.", "p": "2026-11-02"}, {"t": "h", "c": "franchise", "y": 1970, "q": "Which team won the last AFL Championship before the merger?", "a": ["Kansas City Chiefs", "Oakland Raiders", "New York Jets", "Houston Oilers"], "x": "Kansas City won the 1969 AFL title, then Super Bowl IV.", "p": "2026-11-02"}, {"t": "h", "c": "franchise", "y": 1898, "q": "The Cardinals trace their roots to an 1898 club in which city?", "a": ["Chicago", "St. Louis", "Racine", "Decatur"], "x": "They began as Chicago's Morgan Athletic Club, the oldest continuously run pro football club.", "p": "2026-11-02"}, {"t": "h", "c": "legends", "y": 1985, "q": "Which Bears middle linebacker was nicknamed \"Samurai Mike\"?", "a": ["Mike Singletary", "Mike Ditka", "Mike Webster", "Mike Curtis"], "x": "Singletary anchored the 1985 Bears defense.", "p": "2026-11-02"}, {"t": "h", "c": "legends", "y": 1920, "q": "Which Hall of Famer was the first president of the league that became the NFL?", "a": ["Jim Thorpe", "George Halas", "Curly Lambeau", "Red Grange"], "x": "Thorpe was named president of the American Professional Football Association in 1920.", "p": "2026-11-02"}, {"t": "h", "c": "legends", "y": 1971, "q": "Who was the first defensive player named NFL MVP?", "a": ["Alan Page", "Lawrence Taylor", "Joe Greene", "Dick Butkus"], "x": "Minnesota's Alan Page won the award in 1971.", "p": "2026-11-02"}, {"t": "h", "c": "legends", "y": 1966, "q": "Gale Sayers was nicknamed what?", "a": ["The Kansas Comet", "The Galloping Ghost", "The Tyler Rose", "The Diesel"], "x": "Sayers starred at the University of Kansas before joining the Bears.", "p": "2026-11-02"}, {"t": "h", "c": "legends", "y": 1940, "q": "Which early star quarterback was nicknamed \"Slingin' Sammy\"?", "a": ["Sammy Baugh", "Sid Luckman", "Otto Graham", "Bobby Layne"], "x": "Baugh starred for Washington from 1937 to 1952.", "p": "2026-11-02"}, {"t": "h", "c": "legends", "y": 1955, "q": "Otto Graham led which team to its league title game in all 10 of his seasons?", "a": ["Cleveland Browns", "Detroit Lions", "Los Angeles Rams", "Philadelphia Eagles"], "x": "Graham's Browns played for the title every year from 1946 to 1955.", "p": "2026-11-02"}, {"t": "h", "c": "legends", "y": 1991, "q": "Which Bills running back led the NFL in yards from scrimmage four straight seasons, 1989 to 1992?", "a": ["Thurman Thomas", "Marcus Allen", "Barry Sanders", "Emmitt Smith"], "x": "Thomas was the 1991 NFL MVP.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1982, "q": "The January 1982 playoff classic \"The Epic in Miami\" was won by which team?", "a": ["San Diego Chargers", "Miami Dolphins", "New York Jets", "Pittsburgh Steelers"], "x": "San Diego won 41-38 in overtime.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1982, "q": "In the 1982 \"Snowplow Game,\" the Patriots beat which team after a plow cleared a spot for the winning kick?", "a": ["Miami Dolphins", "New York Jets", "Buffalo Bills", "Pittsburgh Steelers"], "x": "New England won 3-0.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1988, "q": "The \"Fog Bowl\" was a December 1988 playoff game between the Bears and which team?", "a": ["Philadelphia Eagles", "New York Giants", "Washington", "Detroit Lions"], "x": "Thick fog rolled into Soldier Field during the game; Chicago won 20-12.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1974, "q": "The 1974 \"Sea of Hands\" touchdown gave which team a playoff win over Miami?", "a": ["Oakland Raiders", "Pittsburgh Steelers", "Buffalo Bills", "Kansas City Chiefs"], "x": "Clarence Davis caught the winner among several Miami defenders.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1988, "q": "Which Browns running back fumbled near the goal line in the January 1988 AFC title game, a play known as \"The Fumble\"?", "a": ["Earnest Byner", "Kevin Mack", "Eric Metcalf", "Greg Pruitt"], "x": "Denver held on to win 38-33.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1982, "q": "The frigid January 1982 \"Freezer Bowl\" was the AFC title game between the Bengals and which team?", "a": ["San Diego Chargers", "Miami Dolphins", "Pittsburgh Steelers", "Buffalo Bills"], "x": "Cincinnati won in a wind chill around 59 below zero.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1993, "q": "In Super Bowl XXVII, which Bills receiver chased down Leon Lett to knock the ball loose before the goal line?", "a": ["Don Beebe", "Andre Reed", "James Lofton", "Thurman Thomas"], "x": "Beebe's hustle play happened even though Dallas won easily.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1970, "q": "Which kicker, born without toes on his kicking foot, made a 63-yard field goal in 1970?", "a": ["Tom Dempsey", "Jan Stenerud", "George Blanda", "Mark Moseley"], "x": "Dempsey's kick for New Orleans stood as the record for decades.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1983, "q": "Which team won the January 1983 AFC title game known as \"The Mud Bowl\"?", "a": ["Miami Dolphins", "New York Jets", "San Diego Chargers", "Pittsburgh Steelers"], "x": "Miami beat the Jets 14-0 on a soaked field.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 1977, "q": "Ken Stabler's 1977 \"Ghost to the Post\" pass went to which tight end?", "a": ["Dave Casper", "Raymond Chester", "Fred Biletnikoff", "Cliff Branch"], "x": "The catch set up Oakland's overtime playoff win over Baltimore.", "p": "2026-11-02"}, {"t": "h", "c": "moments", "y": 2003, "q": "The 2003 \"River City Relay\" multi-lateral touchdown was scored by which team?", "a": ["New Orleans Saints", "Jacksonville Jaguars", "Atlanta Falcons", "Tennessee Titans"], "x": "The Saints scored on the final play but missed the extra point and lost.", "p": "2026-11-02"}, {"t": "h", "c": "records", "q": "Who holds the NFL record for career field goals made?", "a": ["Adam Vinatieri", "Morten Andersen", "Gary Anderson", "Jason Hanson"], "x": "Vinatieri made 599 field goals over 24 seasons.", "p": "2026-11-02"}, {"t": "h", "c": "records", "y": 2006, "q": "How many touchdowns did LaDainian Tomlinson score in his record-setting 2006 season?", "a": ["31", "25", "28", "34"], "x": "Tomlinson ran for 28 and caught 3, winning the MVP award.", "p": "2026-11-02"}, {"t": "h", "c": "records", "y": 1940, "q": "The Bears beat Washington by what score in the 1940 NFL Championship Game?", "a": ["73-0", "56-10", "49-0", "62-7"], "x": "It remains the most lopsided game in NFL history.", "p": "2026-11-02"}, {"t": "h", "c": "records", "y": 1975, "q": "George Blanda played pro football until what age?", "a": ["48", "42", "45", "50"], "x": "Blanda played 26 seasons as a quarterback and kicker.", "p": "2026-11-02"}, {"t": "h", "c": "records", "y": 1995, "q": "Which defensive star became the first player to win five Super Bowl rings?", "a": ["Charles Haley", "Lawrence Taylor", "Bill Romanowski", "Ronnie Lott"], "x": "Haley won two with San Francisco and three with Dallas.", "p": "2026-11-02"}, {"t": "h", "c": "records", "y": 1966, "q": "In 1966, which team scored 72 points against the Giants, a regular-season record?", "a": ["Washington", "Chicago Bears", "Cleveland Browns", "Green Bay Packers"], "x": "Washington won 72-41.", "p": "2026-11-02"}, {"t": "h", "c": "coaches", "y": 1999, "q": "Which team traded its entire 1999 draft to select Ricky Williams?", "a": ["New Orleans Saints", "Washington", "Miami Dolphins", "Chicago Bears"], "x": "Coach Mike Ditka gave up all his 1999 picks plus two in 2000.", "p": "2026-11-02"}, {"t": "h", "c": "coaches", "y": 1979, "q": "Which Hall of Fame QB was a 1979 third-round pick, 82nd overall?", "a": ["Joe Montana", "Dan Marino", "Jim Kelly", "Warren Moon"], "x": "San Francisco found Montana late in the third round out of Notre Dame.", "p": "2026-11-02"}, {"t": "h", "c": "coaches", "y": 1984, "q": "Which Hall of Fame QB went undrafted and won five championships in Canada first?", "a": ["Warren Moon", "Kurt Warner", "Doug Flutie", "Joe Theismann"], "x": "Moon won five Grey Cups in Edmonton before joining Houston in 1984.", "p": "2026-11-02"}]</script>
+<script>
+(function () {
+  'use strict';
+
+  // ===== Settings you can change =====
+  var CONFIG = {
+    launch: Date.UTC(2026, 9, 28),  // the date of Daily #1 (year, month 0-11, day)
+    suggestEmail: '',               // e.g. 'you@example.com': shown in the Suggest dialog
+    suggestUrl: ''                  // e.g. a form link: shown as a button in the Suggest dialog
+  };
+
+  var BANK = JSON.parse(document.getElementById('bank').textContent);
+  var KEY = 'triviadrive.v2', OLDKEY = 'triviadrive.v1';
+  var START = 35;          // every possession starts at the offense's own 35
+  var FGLINE = 70;         // field goals from the opponent's 30 or closer
+  var STEP = { e: 6, m: 12, h: 12 };
+  var NAME = { e: 'EASY', m: 'MEDIUM', h: 'HARD' };
+  var DAYL = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  var OPPS = [
+    { name: 'Ridgecrest Ballhawks', short: 'BALLHAWKS', trait: 'Ballhawk defense: your missed HARD questions get picked off more often.', mod: { intP: 0.1 } },
+    { name: 'Port Ember Comets', short: 'COMETS', trait: 'Explosive offense: every play they hit goes 5 yards farther.', mod: { ex: 5 } },
+    { name: 'Millbrook Grinders', short: 'GRINDERS', trait: 'Grind-it-out offense: PREVENT gives up 5 yards instead of 3.', mod: { prevGain: 5 } },
+    { name: 'Granite Falls Ironclads', short: 'IRONCLADS', trait: 'Brick-wall defense: your EASY plays start at 3 yards.', mod: { ezY: 3 } },
+    { name: 'Sundown Jackrabbits', short: 'JACKRABBITS', trait: 'Soft defense: your EASY plays start at 7 yards.', mod: { ezY: 7 } },
+    { name: 'Bayport Rustlers', short: 'RUSTLERS', trait: 'Loose with the ball: blitz takeaways happen 1 in 2.', mod: { takeP: 0.5 } }
+  ];
+  var THEMES = {
+    rules: { name: 'RULES TUESDAY', test: function (q) { return q.c === 'rules'; } },
+    college: { name: 'COLLEGE WEDNESDAY', test: function (q) { return q.c === 'college'; } },
+    throwback: { name: 'THROWBACK THURSDAY', test: function (q) { return q.y && q.y < 2000; } },
+    legends: { name: 'LEGENDS FRIDAY', test: function (q) { return q.c === 'legends' || q.c === 'moments'; } },
+    superbowl: { name: 'CHAMPIONSHIP SATURDAY', test: function (q) { return q.c === 'superbowl'; } },
+    playoff: { name: 'PLAYOFF SUNDAY', test: null }
+  };
+  var WX = {
+    snow: { name: 'SNOW GAME', desc: '10 seconds to answer.', emo: '❄️' },
+    wind: { name: 'WINDY', desc: 'Field goals use HARD questions.', emo: '💨' },
+    rain: { name: 'RAIN', desc: 'Missed HARD questions get picked off more often.', emo: '🌧️' }
+  };
+  var RANKS = [[0, 'ROOKIE'], [1000, 'STARTER'], [3000, 'PRO BOWLER'], [7000, 'ALL-PRO'], [15000, 'HALL OF FAMER']];
+  var ACH = [
+    { id: 'first', name: 'OPENING KICKOFF', desc: 'Win your first game.', test: function (g, w) { return w; } },
+    { id: 'odos', name: 'ONE DRIVE, ONE STOP', desc: 'Win after just one possession each.', test: function (g, w) { return w && g.poss.you === 1 && g.poss.cpu === 1; } },
+    { id: 'perfect', name: 'PERFECT GAME', desc: 'Win without a wrong answer.', test: function (g, w) { return w && g.wrongs === 0; } },
+    { id: 'under', name: 'UNDER PAR', desc: 'Win in fewer questions than par.', test: function (g, w, p) { return w && g.asked < p; } },
+    { id: 'eagle', name: 'EAGLE', desc: 'Win 2 or more under par.', test: function (g, w, p) { return w && g.asked <= p - 2; } },
+    { id: 'sd', name: 'SUDDEN DEATH', desc: 'Win in sudden death.', test: function (g, w) { return w && g.sd; } },
+    { id: 'walkoff', name: 'WALK-OFF KICK', desc: 'Win on a field goal.', test: function (g, w) { return w && g.winCode === 'FG'; } },
+    { id: 'goalline', name: 'GOAL-LINE STAND', desc: 'Stop a drive that reached your 10.', test: function (g) { return g.flags.goalLine; } },
+    { id: 'block', name: 'BLOCK PARTY', desc: 'Block a field goal.', test: function (g) { return g.blocks > 0; } },
+    { id: 'hawk', name: 'BALL HAWK', desc: 'Force a takeaway.', test: function (g) { return g.takes > 0; } },
+    { id: 'sacks', name: 'SACK MASTER', desc: 'Get 3 sacks in one game.', test: function (g) { return g.sacks >= 3; } },
+    { id: 'safety', name: 'SAFETY FIRST', desc: 'Score a safety.', test: function (g) { return g.flags.safety; } },
+    { id: 'fire', name: 'ON FIRE', desc: 'Get 3 right answers in a row.', test: function (g) { return g.maxFire >= 3; } },
+    { id: 'heat', name: 'HEAT WAVE', desc: 'Get 8 right answers in a row.', test: function (g) { return g.maxFire >= 8; } },
+    { id: 'trick', name: 'TRICK SHOT', desc: 'Convert a trick play.', test: function (g) { return g.flags.trick; } },
+    { id: 'flag', name: 'OVERTURNED', desc: "Win a coach's challenge.", test: function (g) { return g.chRes === 'won'; } },
+    { id: 'playoff', name: 'PLAYOFF HERO', desc: 'Win a Sunday playoff game.', test: function (g, w) { return w && !g.arch && setup(g.day).allpro; } },
+    { id: 'week', name: 'WEEK WARRIOR', desc: 'Play 7 days in a row.', test: function () { return S.streak >= 7; } },
+    { id: 'iron', name: 'IRON MAN', desc: 'Play 30 days in a row.', test: function () { return S.streak >= 30; } },
+    { id: 'hist', name: 'HISTORIAN', desc: 'Play 5 archive games.', test: function () { return (S.archPlayed || 0) >= 5; } }
+  ];
+
+  // ---------- seeded randomness ----------
+  function hash(str) {
+    var h = 1779033703 ^ str.length;
+    for (var i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; }
+    h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return (h ^= h >>> 16) >>> 0;
+  }
+  function mulberry(a) {
+    return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  }
+  function rand(key) { return mulberry(hash(key))(); }
+  function shuffle(arr, key) {
+    var r = mulberry(hash(key)), a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  // ---------- daily setup (same for everyone) ----------
+  var SU_CACHE = {};
+  function setup(day) {
+    if (SU_CACHE[day]) return SU_CACHE[day];
+    var d = new Date(CONFIG.launch + (day - 1) * 864e5), wd = d.getUTCDay();
+    var theme = { 0: 'playoff', 2: 'rules', 3: 'college', 4: 'throwback', 5: 'legends', 6: 'superbowl' }[wd] || '';
+    var r = rand('wx|' + day), wx = r < 0.12 ? 'snow' : r < 0.22 ? 'wind' : r < 0.30 ? 'rain' : '';
+    var opp = OPPS[Math.floor(rand('opp|' + day) * OPPS.length)];
+    var allpro = wd === 0;
+    return (SU_CACHE[day] = {
+      day: day, wd: wd, theme: theme, wx: wx, opp: opp, allpro: allpro,
+      key: d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()),
+      label: d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' }),
+      long: d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }),
+      mod: {
+        tlim: wx === 'snow' ? 10 : 15,
+        fgTier: wx === 'wind' ? 'h' : 'm',
+        ezY: opp.mod.ezY || 5,
+        intP: 0.25 + (wx === 'rain' ? 0.1 : 0) + (opp.mod.intP || 0),
+        takeP: opp.mod.takeP || (allpro ? 0.25 : 1 / 3),
+        ex: (opp.mod.ex || 0) + (allpro ? 5 : 0),
+        prevGain: opp.mod.prevGain || 3,
+        plen: allpro ? 900 : 600,
+        trick: rand('trick|' + day) < 0.12,
+        tossWin: rand('toss|' + day) < 0.5,
+        cpuChoice: rand('cpuch|' + day) < 0.5 ? 'receive' : 'defer'
+      }
+    });
+  }
+
+  // ---------- question queues ----------
+  var POOL = { e: [], m: [], h: [] };
+  BANK.forEach(function (q, i) { q.id = i; POOL[q.t].push(q); });
+  var PERM = {}, TPERM = {};
+  ['e', 'm', 'h'].forEach(function (t) { PERM[t] = shuffle(POOL[t], 'perm|' + t); });
+  Object.keys(THEMES).forEach(function (k) {
+    if (!THEMES[k].test) return;
+    TPERM[k] = {};
+    ['e', 'm', 'h'].forEach(function (t) { TPERM[k][t] = shuffle(POOL[t].filter(THEMES[k].test), 'tperm|' + k + '|' + t); });
+  });
+  // Day packs: questions tagged with a date ("p": "2026-11-02") are served first on that date.
+  var PACK = {};
+  BANK.forEach(function (q) { if (q.p) { if (!PACK[q.p]) PACK[q.p] = { e: [], m: [], h: [] }; PACK[q.p][q.t].push(q); } });
+  // Deal a pack out one category at a time so every game gets a mix of topics.
+  function mixCats(list, key) {
+    var groups = {}, order = [], out = [];
+    shuffle(list, key).forEach(function (q) { if (!groups[q.c]) { groups[q.c] = []; order.push(q.c); } groups[q.c].push(q); });
+    while (out.length < list.length) order.forEach(function (c) { if (groups[c].length) out.push(groups[c].shift()); });
+    return out;
+  }
+  var QCACHE = {};
+  function queue(su, tier) {
+    var k = su.day + '|' + tier;
+    if (QCACHE[k]) return QCACHE[k];
+    var rest = PERM[tier], roff = ((su.day - 1) * STEP[tier]) % rest.length;
+    var th = su.theme && TPERM[su.theme] ? TPERM[su.theme][tier] : [];
+    var toff = th.length ? (Math.floor((su.day - 1) / 7) * 6) % th.length : 0;
+    var out = [], seen = {}, ri = 0, ti = 0;
+    if (PACK[su.key]) mixCats(PACK[su.key][tier], 'pack|' + su.key + '|' + tier).forEach(function (q) { seen[q.id] = 1; out.push(q); });
+    while (ri < rest.length || ti < th.length) {
+      var q;
+      if (th.length && ti < th.length && (out.length % 2 === 0 || ri >= rest.length)) q = th[(toff + ti++) % th.length];
+      else q = rest[(roff + ri++) % rest.length];
+      if (!seen[q.id]) { seen[q.id] = 1; out.push(q); }
+    }
+    return (QCACHE[k] = out);
+  }
+  function questionFor(su, tier, n) {
+    var list = queue(su, tier), q = list[n % list.length];
+    var order = shuffle([0, 1, 2, 3], 'ans|' + su.day + '|' + q.id);
+    return { id: q.id, tier: tier, q: q.q, x: q.x || '', opts: order.map(function (i) { return q.a[i]; }), correct: order.indexOf(0), answer: q.a[0] };
+  }
+
+  // ---------- dates ----------
+  function today() {
+    var d = new Date();
+    return { num: Math.max(1, Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - CONFIG.launch) / 864e5) + 1) };
+  }
+  function untilMidnight() {
+    var d = new Date(), n = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+    var s = Math.max(0, Math.floor((n - d) / 1000));
+    return pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60);
+  }
+  function weekOf(day) {
+    var start = Math.floor((day + 1) / 7) * 7 - 1;  // Monday's day number (Daily #1 is a Wednesday)
+    var days = []; for (var i = 0; i < 7; i++) days.push(start + i);
+    return { start: start, days: days };
+  }
+
+  // ---------- storage (falls back to memory) ----------
+  var mem = {};
+  function loadKey(k) { try { var v = localStorage.getItem(k); if (v) return JSON.parse(v); } catch (e) {} return null; }
+  function persist() {
+    if (SIM) return;
+    var v = { stats: S, game: TG, arch: AG, prac: PG }; mem.v = v;
+    try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {}
+  }
+
+  var T = today();
+  var saved = loadKey(KEY) || {};
+  var old = !saved.stats ? loadKey(OLDKEY) : null;   // carry stats over from the first version
+  var S = Object.assign({ played: 0, wins: 0, losses: 0, ties: 0, streak: 0, best: 0, last: 0, byes: 0, seenHelp: false, name: '', hist: {}, friends: [], xp: 0, ach: {}, archPlayed: 0, mute: false },
+    saved.stats || (old && old.stats) || {});
+  ['hist', 'ach'].forEach(function (k) { if (!S[k]) S[k] = {}; });
+  if (!S.friends) S.friends = [];
+  if (old && old.stats) S.seenHelp = false;  // show the new rules once
+  var TG = saved.game && saved.game.day === T.num ? saved.game : null;
+  var AG = saved.arch && !saved.arch.done ? saved.arch : null;
+  var PG = saved.prac && saved.prac.day === T.num ? saved.prac : null;
+  var G = null, SIM = 0;
+  function setActive(g) { if (g.prac) PG = g; else if (g.arch) AG = g; else TG = g; G = g; }
+  function SU() { return setup(G.day); }
+  function MOD() { return SU().mod; }
+
+  function newGame(day, arch, prac) {
+    var su = setup(day);
+    return { day: day, arch: !!arch, prac: !!prac, you: 0, cpu: 0, per: 1, clock: su.mod.plen,
+      side: 'T', step: 'toss', first: '', tossMsg: '', poss: { you: 0, cpu: 0 }, sd: false,
+      yard: START, down: 1, toGo: 10, kz: 0, fire: 0, maxFire: 0, trickUsed: false, dmax: 0,
+      qi: { e: 0, m: 0, h: 0 }, cur: null, deadline: 0, pick: -1,
+      drives: [], asked: 0, right: 0, wrongs: 0, stops: 0, takes: 0, sacks: 0, blocks: 0,
+      res: null, after: null, snap: null, chUsed: false, chal: false, chNote: '', chRes: '', n: 0,
+      over: false, done: false, recorded: false, winner: '', winCode: '', flags: {}, warned: false };
+  }
+
+  // ---------- helpers ----------
+  function fmt(t) { var m = Math.floor(t / 60), x = t % 60; return m + ':' + pad(x); }
+  function spot(y) { return y < 50 ? 'OWN ' + y : y === 50 ? 'MIDFIELD' : 'OPP ' + (100 - y); }
+  function cpuSpot(s) { return s < 50 ? 'THEIR ' + s : s === 50 ? 'MIDFIELD' : 'YOUR ' + (100 - s); }
+  function allowed(y) { return y < 50 ? ['e', 'm', 'h'] : y < 80 ? ['m', 'h'] : ['h']; }
+  function drive() { return G.drives[G.drives.length - 1]; }
+  function ord(n) { return ['', '1ST', '2ND', '3RD', '4TH'][n]; }
+  function say(t) { if (SIM) return; var el = document.getElementById('sr'); el.textContent = ''; setTimeout(function () { el.textContent = t; }, 50); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function $(id) { return document.getElementById(id); }
+  function signed(n) { return (n > 0 ? '+' : '') + n; }
+  function title(s) { return s.toLowerCase().replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); }); }
+  function roll(key) { return rand(G.day + '|' + key + '|' + (G.n++) + (SIM ? '|s' + SIM : '')); }
+  function clock(sec) { G.clock -= sec; while (G.clock <= 0) { G.per++; G.clock += MOD().plen; } }
+  function other(t) { return t === 'you' ? 'cpu' : 'you'; }
+  function out() { if (!SIM) { persist(); render(); } }
+
+  // yards for an offensive call: Easy and Medium shrink when called again and again
+  function gainFor(t) {
+    if (t === 'e') return Math.max(1, MOD().ezY - G.kz);
+    if (t === 'm') return Math.max(5, 10 - 2 * G.kz);
+    return 20 + (G.fire >= 3 ? 5 : 0);
+  }
+  function canTrick() { return MOD().trick && !G.trickUsed && G.side === 'O' && G.yard < 80; }
+
+  // ---------- sound (8-bit, generated in the browser) ----------
+  var AC = null;
+  function ac() {
+    if (AC === null) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = false; } }
+    if (AC && AC.state === 'suspended') { try { AC.resume(); } catch (e) {} }
+    return AC;
+  }
+  function tone(f, t0, dur, type, vol) {
+    var a = ac(); if (!a) return;
+    try {
+      var o = a.createOscillator(), g = a.createGain(), t = a.currentTime + t0;
+      o.type = type || 'square'; o.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(vol || 0.05, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) {}
+  }
+  function noise(t0, dur, vol) {
+    var a = ac(); if (!a) return;
+    try {
+      var len = Math.floor(a.sampleRate * dur), b = a.createBuffer(1, len, a.sampleRate), d = b.getChannelData(0);
+      for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      var s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(), t = a.currentTime + t0;
+      f.type = 'bandpass'; f.frequency.value = 900; g.gain.value = vol || 0.08;
+      s.buffer = b; s.connect(f); f.connect(g); g.connect(a.destination); s.start(t);
+    } catch (e) {}
+  }
+  function sfx(n) {
+    if (SIM || S.mute) return;
+    if (n === 'tick') { tone(440, 0, 0.06); tone(440, 0.2, 0.06); tone(440, 0.4, 0.06); tone(660, 0.6, 0.08); }
+    else if (n === 'good') { tone(523, 0, 0.1); tone(659, 0.08, 0.1); tone(784, 0.16, 0.2); }
+    else if (n === 'bad') { tone(220, 0, 0.18, 'sawtooth'); tone(147, 0.15, 0.32, 'sawtooth'); }
+    else if (n === 'td') { [523, 659, 784, 1047].forEach(function (f, i) { tone(f, i * 0.12, 0.2); }); noise(0.1, 1.2, 0.1); }
+    else if (n === 'whistle') { tone(2100, 0, 0.12, 'sine', 0.04); tone(2300, 0.14, 0.3, 'sine', 0.04); }
+    else if (n === 'win') { [392, 523, 659, 784, 659, 784, 1047].forEach(function (f, i) { tone(f, i * 0.11, 0.22); }); noise(0.2, 1.5, 0.1); }
+    else if (n === 'lose') { [392, 349, 311, 262].forEach(function (f, i) { tone(f, i * 0.22, 0.3, 'triangle', 0.07); }); }
+    else if (n === 'fire') { tone(880, 0, 0.06); tone(1175, 0.06, 0.06); tone(1568, 0.12, 0.12); }
+    else if (n === 'flag') { tone(1200, 0, 0.08); tone(900, 0.1, 0.12); }
+  }
+
+  // ---------- engine: actions ----------
+  function ask(tier, mode, extra) {
+    var q = questionFor(SU(), tier, G.qi[tier]++);
+    q.mode = mode;
+    if (extra) Object.keys(extra).forEach(function (k) { q[k] = extra[k]; });
+    G.cur = q; G.deadline = Date.now() + MOD().tlim * 1000; G.step = 'question'; G.warned = false; G.snap = null; G.pick = -1;
+    if (!SIM) { persist(); render(); say(NAME[tier] + ' question. ' + q.q); }
+  }
+
+  function result(ttl, sub, kind, after, showAnswer) {
+    if (G.chNote) {
+      sub = (G.chNote === 'won' ? 'Challenge won! The play is overturned. ' : 'Challenge lost. The call stands. ') + sub;
+      G.chRes = G.chNote; if (drive()) drive().f = G.chNote; G.chNote = '';
+    }
+    G.res = { title: ttl, sub: sub, kind: kind, answer: showAnswer && G.cur ? G.cur.answer : '', x: showAnswer && G.cur ? G.cur.x : '' };
+    G.after = after; G.step = 'result';
+    if (!SIM) {
+      persist(); render(); say(ttl + '. ' + sub);
+      if (after.next === 'final') setTimeout(function () { sfx(G.winner === 'you' ? 'win' : 'lose'); }, 250);
+      else if (/TOUCHDOWN/.test(ttl)) setTimeout(function () { sfx('td'); }, 250);
+      else if (/SUDDEN|NEXT SCORE/.test(sub)) setTimeout(function () { sfx('whistle'); }, 250);
+    }
+  }
+
+  function tossPick(choice) {           // you won the toss
+    G.first = choice === 'receive' ? 'you' : 'cpu';
+    G.tossMsg = 'You won the toss and chose to ' + (choice === 'receive' ? 'receive.' : 'defer. You play defense first.');
+    startPoss(G.first, START); out();
+  }
+  function tossLost() {
+    var c = MOD().cpuChoice;
+    G.first = c === 'receive' ? 'cpu' : 'you';
+    G.tossMsg = SU().opp.short + ' won the toss and chose to ' + (c === 'receive' ? 'receive.' : 'defer. You get the ball first.');
+    startPoss(G.first, START); out();
+  }
+
+  function startPoss(team, yard) {
+    G.poss[team]++;
+    G.side = team === 'you' ? 'O' : 'D';
+    G.yard = Math.max(1, Math.min(99, yard)); G.down = 1; G.toGo = Math.min(10, 100 - G.yard);
+    G.kz = 0; G.dmax = G.yard; G.step = 'call';
+    G.drives.push({ s: team === 'you' ? 'O' : 'D', m: [], r: '' });
+  }
+
+  // the CPU's 4th-down decision
+  function cpuFourth() {
+    var need = G.you - G.cpu, inRange = G.yard >= FGLINE;
+    if (G.sd) return inRange ? 'fg' : (G.yard >= 50 && G.toGo <= 4 ? 'go' : 'punt');
+    if (G.first === 'you') return (need <= 3 && inRange) ? 'fg' : 'go';  // CPU has the second possession
+    if (inRange) return 'fg';
+    return G.yard >= 55 && G.toGo <= 3 ? 'go' : 'punt';
+  }
+  function prepCall() {
+    if (G.side !== 'D' || G.down !== 4) return;
+    var p = cpuFourth();
+    if (p === 'fg') G.side = 'DFG';
+    else if (p === 'punt') { clock(10); var y = Math.max(20, 100 - (G.yard + 40)); endPoss('THEY PUNT', 'They punt from ' + cpuSpot(G.yard).toLowerCase() + '.', 'good', 'PUNT', 'you', y, false); }
+  }
+
+  function call(kind) {
+    if (!G || G.step !== 'call') return;
+    var s = G.side;
+    if (s === 'O') {
+      if (kind === 'e' || kind === 'm' || kind === 'h') {
+        if (allowed(G.yard).indexOf(kind) < 0) return;
+        var g = gainFor(kind);
+        if (kind === 'h') G.kz = 0; else G.kz++;
+        ask(kind, 'play', { gain: g });
+      } else if (kind === 'trick') {
+        if (!canTrick()) return;
+        G.trickUsed = true; G.kz = 0; ask('h', 'trick', { gain: 30 });
+      } else if (kind === 'fg') {
+        if (G.yard < FGLINE) return;
+        ask(MOD().fgTier, 'fg');
+      } else if (kind === 'punt') {
+        if (G.down !== 4) return;
+        clock(10);
+        endPoss('PUNT', 'You punt it away.', 'neutral', 'PUNT', 'cpu', Math.max(20, 100 - (G.yard + 40)), false);
+      }
+    } else if (s === 'P') { if (kind === 'xp') ask('e', 'xp'); else if (kind === '2pt') ask('h', '2pt'); }
+    else if (s === 'D') { if (kind === 'prevent') ask('e', 'prevent'); else if (kind === 'base') ask('m', 'base'); else if (kind === 'blitz') ask('h', 'blitz'); }
+    else if (s === 'DFG') { if (kind === 'block') ask('h', 'block'); }
+    else if (s === 'X') { if (kind === 'stop2') ask('h', 'stop2'); }
+  }
+
+  function resolve(i) {
+    if (!G || (G.step !== 'question' && G.step !== 'reveal')) return;
+    var snap = (G.chUsed || SIM) ? null : JSON.stringify(G);
+    var q = G.cur, right = i === q.correct, mod = MOD(), d = drive(), lim = mod.tlim;
+    var taken = SIM ? 6 : Math.min(lim, Math.max(1, Math.ceil((Math.min(Date.now(), G.deadline) - (G.deadline - lim * 1000)) / 1000)));
+    var why = i < 0 ? 'Time ran out.' : 'Wrong answer.';
+    var hot = G.fire >= 3;
+    if (G.chal) { G.chal = false; G.chNote = right ? 'won' : 'lost'; }
+    G.snap = !right && snap ? snap : null;
+    G.asked++;
+    if (right) { G.right++; G.fire++; if (G.fire > G.maxFire) G.maxFire = G.fire; if (G.fire === 3 && !SIM) setTimeout(function () { sfx('fire'); }, 400); }
+    else { G.wrongs++; G.fire = 0; }
+    var m = q.mode;
+
+    if (m === 'play' || m === 'trick') {
+      if (right) {
+        clock(30 + taken);
+        if (m === 'trick') G.flags.trick = true;
+        if (G.yard >= 80 || G.yard + q.gain >= 100) { d.m.push('S'); return touchdown('you'); }
+        d.m.push('G'); G.yard += q.gain;
+        var left = G.toGo - q.gain;
+        if (left <= 0) { G.down = 1; G.toGo = Math.min(10, 100 - G.yard); } else { G.down++; G.toGo = left; }
+        return result((m === 'trick' ? 'TRICK PLAY! ' : '') + '+' + q.gain + ' YARDS!', left <= 0 ? 'First down.' : 'Short of the sticks. Keep going.', 'good', { next: 'call' }, true);
+      }
+      clock(5);
+      if (m === 'play' && q.tier === 'h' && roll('int') < mod.intP) { d.m.push('T'); return endPoss('INTERCEPTED!', why + ' Picked off.', 'bad', 'INT', 'cpu', 100 - G.yard, true); }
+      if (G.down >= 4) { d.m.push('T'); return endPoss('TURNOVER ON DOWNS', why + ' They take over.', 'bad', 'DOWNS', 'cpu', 100 - G.yard, true); }
+      d.m.push('I'); G.down++;
+      return result('INCOMPLETE', why + ' Lose the down.', 'bad', { next: 'call' }, true);
+    }
+    if (m === 'fg') {
+      clock(5);
+      var dist = 100 - G.yard + 17;
+      if (right) { d.m.push('S'); return score('you', 3, 'FG', 'FIELD GOAL IS GOOD!', dist + ' yards. +3.', true); }
+      d.m.push('T'); return endPoss('NO GOOD!', why + ' The ' + dist + '-yard kick misses.', 'bad', 'MISS', 'cpu', 100 - G.yard, true);
+    }
+    if (m === 'xp' || m === '2pt') {
+      var pts = m === 'xp' ? 1 : 2;
+      if (right) G.you += pts;
+      var t = m === 'xp' ? (right ? 'EXTRA POINT IS GOOD!' : 'EXTRA POINT MISSED') : (right ? 'TWO-POINT TRY IS GOOD!' : 'TWO-POINT TRY FAILS');
+      return endPoss(t, right ? '+' + pts + (pts > 1 ? ' points.' : ' point.') : why, right ? 'good' : 'bad', 'TD', 'cpu', START, true);
+    }
+
+    // ----- defense -----
+    clock(30);
+    if (m === 'block') {
+      if (right) { d.m.push('B'); G.blocks++; G.stops++; return endPoss('BLOCKED!', 'You got a hand on the kick.', 'good', 'BLOCKED', 'you', 100 - G.yard, true); }
+      d.m.push('A'); return score('cpu', 3, 'FG', 'THEIR FIELD GOAL IS GOOD', why + ' The ' + (100 - G.yard + 17) + '-yard kick is good.', true);
+    }
+    if (m === 'stop2') {
+      if (right) G.stops++; else G.cpu += 2;
+      d.m.push(right ? 'B' : 'A');
+      return endPoss(right ? 'TWO-POINT TRY STOPPED!' : 'THEIR TWO-POINT TRY IS GOOD', right ? 'You held.' : why + ' They convert.', right ? 'good' : 'bad', 'TD', 'you', START, true);
+    }
+    var gain, ttl, kind;
+    if (right) {
+      G.stops++;
+      if (m === 'blitz') {
+        G.sacks++;
+        var tp = hot ? Math.max(mod.takeP, 0.5) : mod.takeP;
+        if (roll('take') < tp) { d.m.push('K'); G.takes++; return endPoss('TAKEAWAY!', 'Your blitz forced a turnover.', 'good', 'TAKEAWAY', 'you', 100 - G.yard, true); }
+        d.m.push('B'); gain = -5; ttl = 'SACK! -5';
+      } else if (m === 'prevent') { d.m.push('B'); gain = mod.prevGain; ttl = 'HELD TO ' + gain + ' YARDS'; }
+      else { d.m.push('B'); gain = 0; ttl = 'STOP! NO GAIN'; }
+      kind = 'good';
+    } else {
+      d.m.push('A'); gain = (m === 'blitz' ? 20 : 10) + mod.ex;
+      ttl = m === 'blitz' ? 'BIG PLAY! +' + gain : 'THEY GAIN ' + gain; kind = 'bad';
+    }
+    return cpuMove(gain, ttl, right ? '' : why + ' ', kind);
+  }
+
+  function cpuMove(gain, ttl, lead, kind) {
+    G.yard += gain;
+    if (G.yard <= 0) { G.flags.safety = true; return score('you', 2, 'SAFETY', 'SAFETY!', 'Sacked in their own end zone. +2.', true); }
+    if (G.yard >= 100) return touchdown('cpu');
+    if (G.yard > G.dmax) G.dmax = G.yard;
+    var left = G.toGo - gain;
+    if (left <= 0) { G.down = 1; G.toGo = Math.min(10, 100 - G.yard); return result(ttl, lead + 'First down at ' + cpuSpot(G.yard).toLowerCase() + '.', kind, { next: 'call' }, true); }
+    if (G.down >= 4) return endPoss('STOPPED ON 4TH DOWN!', lead + 'Turnover on downs.', 'good', 'DOWNS', 'you', 100 - G.yard, true);
+    G.down++; G.toGo = left;
+    return result(ttl, lead + ord(G.down).toLowerCase() + ' & ' + G.toGo + ' at ' + cpuSpot(G.yard).toLowerCase() + '.', kind, { next: 'call' }, true);
+  }
+
+  function touchdown(team) {
+    G[team] += 6;
+    var d = drive(); d.r = 'TD';
+    var o = other(team);
+    if (G.sd) return gameOver(team, team === 'you' ? 'WALK-OFF TOUCHDOWN!' : 'THEIR TOUCHDOWN', 'Next score wins, and it was a touchdown.', 'TD', true);
+    if (team !== G.first && G[team] > G[o]) return gameOver(team, team === 'you' ? 'GAME-WINNING TOUCHDOWN!' : 'THEIR TOUCHDOWN', 'The second possession scores and takes the lead.', 'TD', true);
+    if (team === 'you') return result('TOUCHDOWN!', '+6. Kick the extra point or go for two.', 'good', { next: 'pat' }, true);
+    var diff = G.you - G.cpu;     // CPU's try
+    if (team === G.first || diff <= 1) {
+      G.cpu += 1;
+      if (team !== G.first && G.cpu > G.you) return gameOver('cpu', 'THEIR TOUCHDOWN', 'Touchdown plus the extra point.', 'TD', true);
+      return endPoss('THEIR TOUCHDOWN', diff === 1 ? 'The extra point ties it.' : '+7 with the extra point.', 'bad', 'TD', 'you', START, true);
+    }
+    return result('THEIR TOUCHDOWN', "They're going for two to tie it. Stop them!", 'bad', { next: 'stop2' }, true);
+  }
+
+  function score(team, pts, code, ttl, sub, showAns) {
+    G[team] += pts; drive().r = code;
+    if (G.sd) return gameOver(team, ttl, sub + ' Next score wins!', code, showAns);
+    if (code === 'SAFETY' && G.poss.you + G.poss.cpu === 1) return gameOver(team, ttl, sub + ' A safety on the opening drive ends it.', code, showAns);
+    return endPoss(ttl, sub, team === 'you' ? 'good' : 'bad', code, code === 'SAFETY' ? team : other(team), START, showAns);
+  }
+
+  // a possession is over: check NFL overtime rules, then hand the ball over
+  function endPoss(ttl, sub, kind, code, nextTeam, nextYard, showAns) {
+    var d = drive(); if (!d.r) d.r = code;
+    if (d.s === 'D' && G.dmax >= 90 && /DOWNS|TAKEAWAY|BLOCKED|PUNT|MISS/.test(code)) G.flags.goalLine = true;
+    if (!G.sd && G.poss.you >= 1 && G.poss.cpu >= 1) {
+      if (G.you !== G.cpu) return gameOver(G.you > G.cpu ? 'you' : 'cpu', ttl, sub, code, showAns);
+      G.sd = true;
+      sub += ' Tied after both possessions. SUDDEN DEATH: NEXT SCORE WINS!';
+    }
+    return result(ttl, sub, kind, { next: 'poss', team: nextTeam, yard: nextYard }, showAns);
+  }
+
+  function gameOver(winner, ttl, sub, code, showAns) {
+    G.winner = winner; G.winCode = code; G.over = true;
+    if (drive() && !drive().r) drive().r = code;
+    return result(ttl, sub + (winner === 'you' ? ' YOU WIN!' : ' ' + SU().opp.short + ' WIN.'), winner === 'you' ? 'good' : 'bad', { next: 'final' }, showAns);
+  }
+
+  function challenge() {
+    if (!G.snap || G.chUsed || G.step !== 'result') return;
+    var s = JSON.parse(G.snap);
+    s.qi = G.qi; s.asked = G.asked; s.wrongs = G.wrongs; s.fire = 0; s.maxFire = G.maxFire;
+    s.chUsed = true; s.chal = true; s.snap = null; s.step = 'question';
+    setActive(s);
+    sfx('flag'); say('Challenge! New question.');
+    var extra = s.cur.gain ? { gain: s.cur.gain } : null;
+    ask(s.cur.tier, s.cur.mode, extra);
+  }
+
+  function next() {
+    if (!G || G.step !== 'result') return;
+    var a = G.after; G.res = null; G.snap = null;
+    if (a.next === 'final') { finish(); return; }
+    if (a.next === 'poss') startPoss(a.team, a.yard);
+    else if (a.next === 'pat') { G.side = 'P'; G.step = 'call'; }
+    else if (a.next === 'stop2') { G.side = 'X'; G.step = 'call'; }
+    else { G.step = 'call'; if (G.side === 'DFG') G.side = 'D'; }
+    if (G.step === 'call') prepCall();
+    if (G.step === 'call') out();
+  }
+
+  function finish() {
+    G.step = 'over'; G.done = true;
+    while (G.drives.length && !G.drives[G.drives.length - 1].m.length && !G.drives[G.drives.length - 1].r) G.drives.pop();
+    if (!G.recorded && !G.prac) {
+      G.recorded = true;
+      var win = G.winner === 'you', res = win ? 'W' : 'L', par = parFor(G.day);
+      S.hist[G.day] = { y: G.you, c: G.cpu, r: G.right, a: G.asked, res: res, arch: G.arch, ch: G.chRes || '', sd: G.sd };
+      if (!G.arch) {
+        S.played++;
+        if (win) S.wins++; else S.losses++;
+        var gap = S.last ? G.day - S.last - 1 : -1;
+        if (S.last === G.day) { /* already counted */ }
+        else if (gap === 0) S.streak++;
+        else if (gap > 0 && gap <= S.byes) { S.byes -= gap; S.streak++; G.byeUsed = gap; }
+        else S.streak = 1;
+        if (S.streak > 0 && S.streak % 7 === 0 && S.byes < 2) { S.byes++; G.byeEarned = true; }
+        S.best = Math.max(S.best, S.streak);
+        S.last = G.day;
+      } else S.archPlayed = (S.archPlayed || 0) + 1;
+      var newA = [];
+      ACH.forEach(function (a) { if (!S.ach[a.id] && a.test(G, win, par)) { S.ach[a.id] = G.day; newA.push(a.id); } });
+      var xp = G.right * 10 + (win ? 100 : 0) + (win && G.asked < par ? 50 + 10 * (par - G.asked) : 0) + newA.length * 100;
+      S.xp = (S.xp || 0) + xp; G.xpGain = xp; G.newAch = newA; G.par = par;
+    }
+    persist(); show('final');
+  }
+
+  // ---------- par: an average player, simulated on the same daily game ----------
+  var PARC = {};
+  function botCall(br) {
+    var s = G.side, r = br();
+    if (s === 'P') return call(G.cpu - G.you === 2 ? '2pt' : 'xp');
+    if (s === 'D') return call(r < 0.1 ? 'prevent' : r < 0.8 ? 'base' : 'blitz');
+    if (s === 'DFG') return call('block');
+    if (s === 'X') return call('stop2');
+    var need = G.cpu - G.you, second = G.first === 'cpu';
+    if (G.yard >= 80) return call('h');
+    if (G.yard >= FGLINE && (G.sd || (G.down === 4 && (!second || need <= 3)))) return call('fg');
+    if (G.down === 4 && G.yard < FGLINE && !(second && !G.sd) && G.yard < 55) return call('punt');
+    var ok = allowed(G.yard), pick = r < 0.15 ? 'e' : r < 0.75 ? 'm' : 'h';
+    if (ok.indexOf(pick) < 0) pick = 'm';
+    if (G.kz >= 2 && pick !== 'h') pick = 'h';
+    return call(pick);
+  }
+  function simGame(day, seed) {
+    G = newGame(day, false, false); SIM = seed;
+    var br = mulberry(hash('bot|' + day + '|' + seed));
+    if (MOD().tossWin) tossPick('defer'); else tossLost();
+    for (var k = 0; k < 400; k++) {
+      if (G.step === 'result') { if (G.after.next === 'final') break; next(); }
+      else if (G.step === 'question') { var acc = { e: 0.85, m: 0.65, h: 0.45 }[G.cur.tier]; resolve(br() < acc ? G.cur.correct : (G.cur.correct + 1) % 4); }
+      else if (G.step === 'call') { var before = G.asked + '|' + G.step + '|' + G.side + '|' + G.down + '|' + G.yard; botCall(br); if (G.step === 'call' && before === G.asked + '|' + G.step + '|' + G.side + '|' + G.down + '|' + G.yard) call('h'); }
+      else break;
+    }
+    return { win: G.winner === 'you', asked: G.asked };
+  }
+  function parFor(day) {
+    if (PARC[day]) return PARC[day];
+    var keepG = G, keepSIM = SIM, wins = [], all = [];
+    try {
+      for (var s = 1; s <= 120; s++) { var r = simGame(day, s); all.push(r.asked); if (r.win) wins.push(r.asked); }
+    } finally { G = keepG; SIM = keepSIM; }
+    var arr = (wins.length >= 10 ? wins : all).sort(function (a, b) { return a - b; });
+    return (PARC[day] = arr[Math.floor(arr.length / 2)] || 15);
+  }
+
+  // ---------- streak, week, rank helpers ----------
+  function liveStreak() {
+    if (!S.last) return 0;
+    var gap = T.num - S.last - 1;
+    return gap <= 0 || gap <= S.byes ? S.streak : 0;
+  }
+  function weekRecord(day) {
+    var w = weekOf(day), W = 0, L = 0;
+    w.days.forEach(function (d) { var h = S.hist[d]; if (h && !h.arch) { if (h.res === 'W') W++; else L++; } });
+    return { w: w, text: W + '-' + L };
+  }
+  function weekCells(day) {
+    var w = weekOf(day), h = '';
+    w.days.forEach(function (d, i) {
+      var r = S.hist[d], cls = 'c', txt = '';
+      if (d < 1) { cls += ' pre'; txt = '-'; }
+      else if (r && !r.arch) { cls += ' ' + (r.res === 'W' ? 'W' : 'L'); txt = r.res; }
+      if (d === T.num) cls += ' now';
+      h += '<div class="wd"><span class="l px">' + (i === 6 ? 'PO' : DAYL[i]) + '</span><span class="' + cls + ' px">' + txt + '</span></div>';
+    });
+    return h;
+  }
+  function rankOf(xp) {
+    var i = 0; while (i + 1 < RANKS.length && xp >= RANKS[i + 1][0]) i++;
+    var cur = RANKS[i], nxt = RANKS[i + 1];
+    return { name: cur[1], floor: cur[0], next: nxt ? nxt[1] : '', nextAt: nxt ? nxt[0] : 0, pct: nxt ? (xp - cur[0]) / (nxt[0] - cur[0]) : 1 };
+  }
+  function rankBar(el, xp) {
+    var r = rankOf(xp), h = '';
+    for (var i = 0; i < 20; i++) h += '<i class="' + (i < Math.round(r.pct * 20) ? 'on' : '') + '"></i>';
+    $(el).innerHTML = h;
+    return r;
+  }
+  function tagsFor(su) {
+    var h = '';
+    if (su.theme === 'playoff') h += '<span class="tag po">PLAYOFF · ALL-PRO CPU</span>';
+    else if (su.theme) h += '<span class="tag theme">' + THEMES[su.theme].name + '</span>';
+    if (su.wx) h += '<span class="tag wx">' + WX[su.wx].name + ': ' + WX[su.wx].desc.toUpperCase() + '</span>';
+    return h;
+  }
+  function tomorrowText() {
+    var su = setup(T.num + 1);
+    return '#' + su.day + ' · ' + su.label + ': vs the ' + su.opp.name + (su.theme ? ', ' + title(THEMES[su.theme].name) : '') + (su.wx ? '. ' + title(WX[su.wx].name) + ' in the forecast.' : '.');
+  }
+  function situation() {
+    if (G.side === 'T') return { t: 'COIN TOSS', c: '' };
+    if (G.sd) return { t: 'SUDDEN DEATH · NEXT SCORE WINS', c: 'sd' };
+    var team = (G.side === 'O' || G.side === 'P') ? 'you' : 'cpu';
+    if (team === G.first && G.poss[other(team)] === 0) return { t: 'OPENING POSSESSION · BOTH TEAMS GET THE BALL', c: '' };
+    var need = G[other(team)] - G[team], who = team === 'you' ? 'YOU NEED' : 'THEY NEED';
+    var txt = need <= 0 ? 'ANY SCORE WINS' : need <= 2 ? 'A FIELD GOAL WINS' : need === 3 ? 'A FIELD GOAL TIES · A TOUCHDOWN WINS' :
+      need <= 5 ? 'A TOUCHDOWN WINS' : need === 6 ? 'A TOUCHDOWN TIES · THE EXTRA POINT WINS' : need === 7 ? 'A TOUCHDOWN + EXTRA POINT TIES · 2 POINTS WINS' : 'A TOUCHDOWN + 2 POINTS TIES';
+    return { t: (need <= 0 ? '' : who + ' ') + txt, c: 'need' };
+  }
+
+  // ---------- rendering ----------
+  var SCREENS = ['home', 'game', 'final', 'archive', 'league', 'trophies'];
+  function show(id) {
+    SCREENS.forEach(function (s) { $(s).hidden = s !== id; });
+    if (id === 'home') renderHome();
+    if (id === 'game') { if (G && G.step === 'reveal') resolve(G.pick); else if (G && G.step === 'question' && Date.now() >= G.deadline) resolve(-1); render(); }
+    if (id === 'final') renderFinal();
+    if (id === 'archive') renderArchive();
+    if (id === 'league') renderLeague();
+    if (id === 'trophies') renderTrophies();
+    soundLabels();
+    window.scrollTo(0, 0);
+  }
+  function soundLabels() { document.querySelectorAll('[data-sound]').forEach(function (b) { b.textContent = 'SOUND: ' + (S.mute ? 'OFF' : 'ON'); }); }
+
+  function renderHome() {
+    var su = setup(T.num);
+    $('h-num').textContent = '#' + T.num;
+    $('h-date').textContent = su.long;
+    $('h-opp').textContent = su.opp.name;
+    $('h-trait').textContent = su.opp.trait;
+    $('h-tags').innerHTML = tagsFor(su);
+    $('h-par').textContent = "TODAY'S PAR: " + parFor(T.num) + ' QUESTIONS';
+    $('h-play').textContent = TG && TG.done ? "SEE TODAY'S RESULT ►" : TG ? 'RESUME GAME ►' : 'PLAY TODAY ►';
+    var done = TG && TG.done;
+    $('h-next').textContent = done ? 'Next Daily in ' + untilMidnight() : '';
+    $('h-tomorrow').hidden = !done;
+    $('h-tomorrow').textContent = done ? 'Tomorrow: ' + tomorrowText() : '';
+    $('h-replay').hidden = !done;
+    $('h-replay').firstChild.textContent = PG && !PG.done ? 'RESUME PRACTICE REPLAY' : 'REPLAY TODAY · PRACTICE';
+    var r = rankBar('h-rankbar', S.xp || 0);
+    $('h-rank').textContent = r.name; $('h-xp').textContent = (S.xp || 0) + ' XP';
+    $('h-ranknext').textContent = r.next ? (r.nextAt - (S.xp || 0)) + ' XP to ' + title(r.next) + '.' : 'Top rank reached.';
+    $('h-week').innerHTML = weekCells(T.num);
+    $('h-week-rec').textContent = weekRecord(T.num).text;
+    $('s-played').textContent = S.played;
+    $('s-win').textContent = S.played ? Math.round(S.wins / S.played * 100) : 0;
+    $('s-streak').textContent = liveStreak();
+    $('s-byes').textContent = S.byes;
+    var gap = S.last ? T.num - S.last - 1 : 0;
+    $('h-bye-note').textContent = gap > 0 && gap <= S.byes && S.streak ? 'You missed ' + gap + ' day' + (gap > 1 ? 's' : '') + '. Play today and a bye saves your ' + S.streak + '-day streak.' :
+      S.byes ? 'Byes protect your streak if you miss a day.' : liveStreak() ? 'Next bye at a ' + (Math.floor(liveStreak() / 7) + 1) * 7 + '-day streak.' : 'Play 7 days in a row to earn a bye.';
+  }
+
+  function btn(label, sub, action, opts) {
+    opts = opts || {};
+    return '<button type="button" class="btn ' + (opts.cls || '') + '" data-act="' + action + '"' + (opts.disabled ? ' disabled' : '') + '>' +
+      esc(label) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</button>';
+  }
+
+  var REVEAL = null;
+  function render() {
+    if (!G) return;
+    var su = SU(), mod = su.mod;
+    $('g-vs').textContent = (G.prac ? 'PRACTICE #' : G.arch ? 'ARCHIVE #' : '#') + G.day + ' · VS ' + su.opp.short + (su.wx ? ' · ' + WX[su.wx].name : '') + (su.allpro ? ' · PLAYOFF' : '');
+    $('g-oppname').textContent = su.opp.short;
+    $('g-you').textContent = G.you; $('g-cpu').textContent = G.cpu;
+    $('g-qtr').textContent = 'OT' + (G.per > 1 ? G.per : '');
+    $('g-clock').textContent = fmt(G.clock);
+    $('g-q').textContent = 'Q ' + G.asked + ' · PAR ' + parFor(G.day);
+    $('g-fire').textContent = G.fire >= 3 ? 'ON FIRE x' + G.fire : '';
+    $('g-flag').textContent = G.chUsed ? 'FLAG USED' : 'FLAG READY';
+    $('g-flag').style.color = G.chUsed ? 'var(--mute)' : 'var(--pink)';
+    $('g-turf').className = 'turf' + (su.wx === 'snow' ? ' snow' : '');
+    var sit = situation(); $('g-sit').textContent = sit.t; $('g-sit').className = 'sit ' + sit.c;
+
+    var ball = $('g-ball'), gain = $('g-gain'), rz = $('g-rz'), side = $('g-side'), dd = $('g-dd'), zone = $('g-zone');
+    var pos, label;
+    if (G.side === 'T') {
+      pos = 50; gain.style.display = 'none'; rz.style.width = '0';
+      side.textContent = 'COIN TOSS'; side.className = 'side px pat'; dd.textContent = 'OVERTIME'; zone.textContent = 'Both teams get the ball. Then next score wins.';
+      label = 'Coin toss before overtime';
+    } else if (G.side === 'O' || G.side === 'P') {
+      pos = G.side === 'P' ? 97 : G.yard;
+      gain.style.display = G.side === 'P' || G.yard >= 100 ? 'none' : 'block';
+      gain.style.left = Math.min(100, G.yard + G.toGo) + '%';
+      rz.style.left = '80%'; rz.style.width = '20%';
+      side.textContent = G.side === 'P' ? 'TRY' : 'OFFENSE'; side.className = 'side px' + (G.side === 'P' ? ' pat' : '');
+      var goal = G.toGo >= 100 - G.yard;
+      dd.textContent = G.side === 'P' ? 'TRY FOR POINT' : ord(G.down) + ' & ' + (goal ? 'GOAL' : G.toGo) + ' · ' + spot(G.yard);
+      zone.textContent = G.side === 'P' ? 'Kick for 1 or go for 2.' : G.yard >= 80 ? 'Red zone: HARD only. A right answer scores.' : G.yard >= 50 ? 'Past midfield: MEDIUM or HARD only.' : 'All plays open.';
+      if (G.side === 'O' && G.kz > 0) zone.textContent += ' The defense is reading your short game: Easy and Medium gains are shrinking. A HARD call resets it.';
+      label = 'Your ball, ' + dd.textContent.toLowerCase();
+    } else {
+      pos = 100 - G.yard;
+      gain.style.display = 'block'; gain.style.left = Math.max(0, 100 - (G.yard + G.toGo)) + '%';
+      rz.style.left = '0%'; rz.style.width = '20%';
+      side.textContent = 'DEFENSE'; side.className = 'side px def';
+      dd.textContent = ord(G.down) + ' & ' + (G.toGo >= 100 - G.yard ? 'GOAL' : G.toGo) + ' · ' + cpuSpot(G.yard);
+      zone.textContent = G.side === 'DFG' ? 'They are lining up for a ' + (100 - G.yard + 17) + '-yard field goal.' : G.side === 'X' ? 'Two-point try from your 2.' : 'Stop them before they score.';
+      label = su.opp.short + ' ball, ' + dd.textContent.toLowerCase();
+    }
+    ball.style.left = 'calc(' + Math.min(100, Math.max(0, pos)) + '% - 6px)';
+    $('g-field').setAttribute('aria-label', label);
+
+    var p = $('panel'), h = '';
+    if (G.step === 'toss') {
+      if (mod.tossWin) {
+        h += '<div class="box gold" style="display:flex;flex-direction:column;gap:10px"><div class="coin spin px" aria-hidden="true">OT</div><p class="px" style="font-size:11px;color:var(--gold);text-align:center">YOU WON THE TOSS!</p>' +
+          '<p class="small">Receive and you get the ball first. Defer and you play defense first, but you will know exactly what you need when you get the ball.</p>' +
+          '<div class="row">' + btn('RECEIVE', 'Offense first', 'receive', { cls: 'primary' }) + btn('DEFER', 'Defense first', 'defer') + '</div></div>';
+      } else {
+        h += '<div class="box dim" style="display:flex;flex-direction:column;gap:10px"><div class="coin spin px" aria-hidden="true">OT</div><p class="px" style="font-size:11px;color:var(--pink);text-align:center">' + esc(su.opp.short) + ' WON THE TOSS</p>' +
+          '<p class="small">They chose to ' + (mod.cpuChoice === 'receive' ? 'receive. You start on defense.' : 'defer. You get the ball first.') + '</p>' +
+          btn('START OVERTIME ►', '', 'tosslost', { cls: 'primary' }) + '</div>';
+      }
+    } else if (G.step === 'question' || G.step === 'reveal') {
+      var q = G.cur;
+      var ctx = { play: NAME[q.tier] + ' · ' + (G.yard >= 80 ? 'TD IF RIGHT' : '+' + q.gain + ' YDS'), trick: 'TRICK PLAY · HARD · +30 YDS', fg: 'FIELD GOAL · ' + NAME[q.tier], xp: 'EXTRA POINT · EASY', '2pt': 'TWO-POINT TRY · HARD',
+        prevent: 'PREVENT · EASY', base: 'BASE · MEDIUM', blitz: 'BLITZ · HARD', block: 'FIELD GOAL BLOCK · HARD', stop2: 'STOP THE 2-POINT TRY · HARD' }[q.mode];
+      if (G.chal) ctx = 'CHALLENGE · ' + NAME[q.tier];
+      var tc = G.chal ? 'var(--red)' : { e: 'var(--green)', m: 'var(--blue)', h: 'var(--pink)' }[q.tier];
+      var rev = G.step === 'reveal';
+      h += '<div class="box"' + (G.chal ? ' style="--c:var(--red)"' : '') + '><div class="qhead px"><span style="color:' + tc + '">' + esc(ctx) + '</span><span id="q-time" style="font-size:11px"></span></div>' +
+        '<div class="segs" id="q-segs" aria-hidden="true"></div>' +
+        '<p class="qtext" id="q-text">' + esc(q.q) + '</p><div class="answers" role="group" aria-labelledby="q-text">';
+      q.opts.forEach(function (o, i) {
+        var cls = '';
+        if (rev && REVEAL && REVEAL.flash) cls = i === q.correct ? ' ok' : i === G.pick ? ' no' : '';
+        else if (rev && i === G.pick) cls = ' picked';
+        h += '<button type="button" class="btn ans' + cls + '" data-act="ans" data-i="' + i + '"' + (rev ? ' disabled' : '') + '><b>' + 'ABCD'.charAt(i) + '</b><span>' + esc(o) + '</span></button>';
+      });
+      h += '</div>' + (rev && !(REVEAL && REVEAL.flash) ? '<p class="drum blink">...</p>' : '') + '</div>';
+    } else if (G.step === 'result') {
+      var r = G.res;
+      var col = r.kind === 'good' ? 'var(--green)' : r.kind === 'bad' ? 'var(--pink)' : 'var(--blue)';
+      h += '<div class="box black" role="status" style="--c:' + col + ';display:flex;flex-direction:column;gap:10px">' +
+        '<p class="banner px ' + r.kind + '">' + esc(r.title) + '</p><p>' + esc(r.sub) + '</p>' +
+        (r.answer ? '<p class="muted">Answer: <span style="color:var(--ink)">' + esc(r.answer) + '</span></p>' : '') +
+        (r.x ? '<p class="why small">' + esc(r.x) + '</p>' : '') +
+        btn(G.after.next === 'final' ? 'FINAL RESULT ►' : 'NEXT ►', '', 'next', { cls: 'primary' }) +
+        (G.snap && !G.chUsed ? btn('THROW THE CHALLENGE FLAG', 'Once per game: new question. Right = overturned.', 'chal', { cls: 'flag' }) : '') +
+        '</div>';
+    } else if (G.side === 'P') {
+      h += '<div class="box dim"><h3 class="px" style="font-size:11px;color:var(--gold);margin-bottom:12px">TRY FOR POINT</h3><div class="row">' +
+        btn('KICK XP', 'Easy question · +1', 'xp') + btn('GO FOR 2', 'Hard question · +2', '2pt', { cls: 'hot' }) + '</div></div>';
+    } else if (G.side === 'DFG') {
+      h += '<div class="box dim" style="display:flex;flex-direction:column;gap:10px"><h3 class="px" style="font-size:11px;color:var(--gold)">FIELD GOAL ATTEMPT</h3>' +
+        '<p class="small">4th down. They are kicking from ' + esc(cpuSpot(G.yard).toLowerCase()) + '. Answer a HARD question to block it.</p>' +
+        btn('RUSH THE KICKER', 'Hard question · right = blocked', 'block', { cls: 'hot' }) + '</div>';
+    } else if (G.side === 'X') {
+      h += '<div class="box dim" style="display:flex;flex-direction:column;gap:10px"><h3 class="px" style="font-size:11px;color:var(--gold)">STOP THE TWO-POINT TRY</h3>' +
+        btn('GOAL-LINE DEFENSE', 'Hard question · right = stopped', 'stop2', { cls: 'hot' }) + '</div>';
+    } else if (G.side === 'D') {
+      var marks = drive().m, recent = '';
+      marks.slice(-6).forEach(function (mk) { recent += '<i class="m-' + mk + '"></i>'; });
+      var tk = G.fire >= 3 ? '1-in-2' : mod.takeP >= 0.5 ? '1-in-2' : mod.takeP <= 0.25 ? '1-in-4' : '1-in-3';
+      var ex = mod.ex;
+      h += '<div class="box dim" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:center"><h3 class="px" style="font-size:11px;color:var(--gold)">DEFENSIVE CALL</h3><span class="stand" aria-hidden="true">' + recent + '</span></div>' +
+        btn('PREVENT', 'Easy. Right: they gain ' + mod.prevGain + '. Wrong: they gain ' + (10 + ex) + '.', 'prevent') +
+        '<div class="row">' + btn('BASE', 'Medium. Right: no gain. Wrong: +' + (10 + ex) + '.', 'base') +
+        btn('BLITZ', 'Hard. Right: sack + ' + tk + ' takeaway. Wrong: +' + (20 + ex) + '.', 'blitz', { cls: 'hot' }) + '</div>' +
+        (G.down === 4 ? '<p class="small" style="color:var(--gold)">4th down: they are going for it. A stop wins the ball back.</p>' : '') + '</div>';
+    } else {
+      var ok = allowed(G.yard);
+      h += '<div class="box dim" style="display:flex;flex-direction:column;gap:10px"><h3 class="px" style="font-size:11px;color:var(--gold)">CALL YOUR PLAY</h3><div class="row">';
+      ['e', 'm', 'h'].forEach(function (t) {
+        var locked = ok.indexOf(t) < 0;
+        h += btn(NAME[t], locked ? 'Locked' : (G.yard >= 80 ? 'TD if right' : '+' + gainFor(t) + ' yds'), 'play-' + t, { disabled: locked, cls: t === 'h' ? 'hot' : '' });
+      });
+      h += '</div><div class="row">' + btn('FIELD GOAL', G.yard >= FGLINE ? (100 - G.yard + 17) + ' yds · ' + title(NAME[mod.fgTier]) : 'From opp 30', 'fg', { disabled: G.yard < FGLINE }) +
+        btn('PUNT', G.down === 4 ? 'Give it away' : '4th down only', 'punt', { disabled: G.down !== 4 }) + '</div>' +
+        (canTrick() ? btn('TRICK PLAY: FLEA FLICKER', 'Once today · Hard question · +30 yards', 'trick', { cls: 'flag' }) : '') +
+        '<p class="muted small">Miss a HARD question: ' + (mod.intP > 0.3 ? 'higher than 1-in-4' : '1-in-4') + ' chance of an interception.</p></div>';
+    }
+    p.innerHTML = h;
+    if (G.step === 'question') { tick(); var first = p.querySelector('.ans'); if (first) first.focus({ preventScroll: true }); }
+    else if (G.step === 'result') { var n = p.querySelector('[data-act="next"]'); if (n) n.focus({ preventScroll: true }); }
+  }
+
+  function pick(i) {
+    if (!G || G.step !== 'question') return;
+    G.step = 'reveal'; G.pick = i; persist();
+    REVEAL = { flash: false }; render(); sfx('tick');
+    var g = G;
+    setTimeout(function () { if (G !== g || G.step !== 'reveal') return; REVEAL.flash = true; render(); sfx(i === G.cur.correct ? 'good' : 'bad'); }, 800);
+    setTimeout(function () { if (G !== g || G.step !== 'reveal') return; REVEAL = null; resolve(i); }, 1600);
+  }
+
+  function tick() {
+    if (!G || G.step !== 'question') return;
+    var lim = MOD().tlim;
+    var left = Math.max(0, Math.ceil((G.deadline - Date.now()) / 1000));
+    var tEl = $('q-time'), sEl = $('q-segs');
+    if (tEl) { tEl.textContent = '0:' + pad(left); tEl.style.color = left <= 5 ? 'var(--pink)' : 'var(--gold)'; }
+    if (sEl) {
+      var c = left <= 5 ? 'var(--pink)' : 'var(--gold)', s = '';
+      for (var i = 0; i < lim; i++) s += '<i style="' + (i < left ? 'background:' + c : '') + '"></i>';
+      sEl.innerHTML = s;
+    }
+    if (left <= 5 && !G.warned) { G.warned = true; say('5 seconds'); }
+    if (left <= 0) pick(-1);
+  }
+  setInterval(tick, 250);
+
+  // ---------- league codes ----------
+  function cleanName(n) { return String(n || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); }
+  function myName() { return cleanName(S.name) || 'PLAYER'; }
+  function chk(f) { return hash('tdv2|' + f.join('|')).toString(36).slice(-4).toUpperCase().padStart(4, '0'); }
+  function makeCode(day, h) { var f = [day, h.y, h.c, h.r, h.a, myName()]; return 'TD-' + f.join('-') + '-' + chk(f); }
+  function parseCodes(text) {
+    var re = /TD-(\d{1,5})-(\d{1,3})-(\d{1,3})-(\d{1,3})-(\d{1,3})-([A-Z0-9]{1,10})-([A-Z0-9]{4})/gi, m, res = [], bad = 0;
+    while ((m = re.exec(text))) {
+      var f = [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4]), Number(m[5]), m[6].toUpperCase()];
+      if (chk(f) === m[7].toUpperCase() && f[3] <= f[4] && f[1] !== f[2]) res.push({ d: f[0], y: f[1], c: f[2], r: f[3], a: f[4], n: f[5] });
+      else bad++;
+    }
+    return { ok: res, bad: bad };
+  }
+
+  // ---------- final ----------
+  var EMO = { G: '🟩', I: '⬜', S: '🟨', T: '🟥', B: '🟦', A: '🟧', K: '🟪' };
+  function shareText() {
+    var su = SU(), win = G.winner === 'you', par = parFor(G.day), diff = G.asked - par;
+    var lines = ['Trivia Drive #' + G.day + (G.prac ? ' (practice replay)' : G.arch ? ' (archive)' : '') + ' 🏈 vs ' + su.opp.short];
+    var t = [];
+    if (su.theme === 'playoff') t.push('🏆 Playoff'); else if (su.theme) t.push(title(THEMES[su.theme].name));
+    if (su.wx) t.push(WX[su.wx].emo + ' ' + title(WX[su.wx].name));
+    if (t.length) lines.push(t.join(' · '));
+    lines.push((win ? 'W in ' + G.asked + ' questions' : 'L after ' + G.asked + ' questions') + ' · ' + G.you + '-' + G.cpu);
+    if (win) lines.push('⛳ Par ' + par + (diff < 0 ? ' · ' + (-diff) + ' under' : diff > 0 ? ' · ' + diff + ' over' : ' · even'));
+    if (G.sd) lines.push('⚡ Sudden death');
+    G.drives.forEach(function (d) { if (d.m.length) lines.push(d.m.map(function (m) { return EMO[m]; }).join('') + (d.f ? '🚩' : '') + ' ' + d.r); });
+    if (G.maxFire >= 3) lines.push('🔥 ' + G.maxFire + ' right in a row');
+    if (G.chRes) lines.push('🚩 Challenge ' + G.chRes);
+    if (!G.arch && !G.prac) { lines.push('Week: ' + weekRecord(G.day).text); lines.push(makeCode(G.day, S.hist[G.day])); }
+    try { if (/^https?:$/.test(location.protocol) && !/claude|anthropic|usercontent/.test(location.hostname)) lines.push(location.origin + location.pathname); } catch (e) {}
+    return lines.join('\n');
+  }
+
+  function renderFinal() {
+    var su = SU(), win = G.winner === 'you', par = parFor(G.day), diff = G.asked - par;
+    var col = win ? 'var(--green)' : 'var(--pink)';
+    $('f-num').textContent = (G.prac ? 'PRACTICE REPLAY #' : G.arch ? 'ARCHIVE #' : 'DAILY CHALLENGE #') + G.day + ' · ' + su.label.toUpperCase();
+    $('f-title').textContent = G.prac ? 'PRACTICE FINAL' : win ? (su.allpro && !G.arch ? 'PLAYOFF WIN!' : 'YOU WIN!') : 'DEFEAT';
+    $('f-vs').textContent = 'vs ' + su.opp.name + (G.sd ? ' · sudden death' : '');
+    $('f-oppname').textContent = su.opp.short;
+    $('f-you').textContent = G.you; $('f-cpu').textContent = G.cpu;
+    var b = $('f-badge'); b.textContent = win ? 'WIN' : 'LOSS'; b.style.background = col;
+    var by = $('f-by'); by.textContent = G.sd ? 'SUDDEN DEATH' : 'OVERTIME'; by.style.color = col;
+    $('f-big').innerHTML = win ? 'WON IN <span style="color:var(--gold)">' + G.asked + '</span> QUESTIONS' : 'LOST AFTER ' + G.asked + ' QUESTIONS';
+    $('f-cardnum').textContent = 'TRIVIA DRIVE #' + G.day;
+    $('f-cardscore').textContent = (win ? 'W' : 'L') + ' ' + G.you + '-' + G.cpu;
+    var h = '', on = 0, dn = 0;
+    G.drives.forEach(function (d) {
+      if (!d.m.length && !d.r) return;
+      var lab = d.s === 'O' ? 'O' + (++on) : 'D' + (++dn);
+      var good = d.s === 'O' ? /^(TD|FG|SAFETY)$/.test(d.r) : !/^(TD|FG)$/.test(d.r);
+      h += '<div class="drow"><span class="lab px">' + lab + '</span><span class="cells">' +
+        d.m.map(function (m) { return '<i class="m-' + m + '"></i>'; }).join('') + (d.f ? '<i class="fl">FLAG</i>' : '') +
+        '</span><span class="res px" style="color:' + (good ? 'var(--gold)' : 'var(--pink)') + '">' + esc(d.r) + '</span></div>';
+    });
+    $('f-chart').innerHTML = h || '<p class="muted">No plays recorded.</p>';
+    $('f-chal').textContent = G.chRes ? "Coach's challenge: " + G.chRes + '.' : G.chUsed ? '' : 'Challenge flag not used.';
+    $('f-q').textContent = G.asked;
+    $('f-par').textContent = win ? (diff === 0 ? 'EVEN' : signed(diff)) : '-';
+    $('f-par').style.color = win && diff < 0 ? 'var(--green)' : 'var(--ink)';
+    $('f-acc').textContent = G.right + '/' + G.asked;
+    $('f-fire').textContent = G.maxFire + ' IN A ROW';
+
+    $('f-xpbox').hidden = G.prac;
+    if (!G.prac) {
+      var r = rankBar('f-rankbar', S.xp || 0);
+      $('f-rank').textContent = r.name + (r.next ? ' · ' + (r.nextAt - S.xp) + ' XP TO ' + r.next : '');
+      $('f-xp').textContent = '+' + (G.xpGain || 0) + ' XP';
+      $('f-ach').innerHTML = (G.newAch || []).map(function (id) { var a = ACH.filter(function (x) { return x.id === id; })[0]; return '<span>TROPHY: ' + esc(a.name) + '</span>'; }).join('');
+    }
+
+    var official = S.hist[G.day], c = '';
+    var wins = [];
+    Object.keys(S.hist).forEach(function (k) { var x = S.hist[k]; if (!x.arch && Number(k) !== G.day && x.res === 'W') wins.push(x.a); });
+    if (G.prac && official && !official.arch) {
+      c = '<table><tr><th></th><th class="num">RESULT</th><th class="num">QUESTIONS</th></tr>' +
+        '<tr><td>Official</td><td class="num">' + official.res + ' ' + official.y + '-' + official.c + '</td><td class="num">' + official.a + '</td></tr>' +
+        '<tr><td>This replay</td><td class="num">' + (win ? 'W' : 'L') + ' ' + G.you + '-' + G.cpu + '</td><td class="num">' + G.asked + '</td></tr></table>' +
+        '<p class="small" style="margin-top:8px">Practice only. Your official result for today stays the same.</p>';
+    } else if (!wins.length) {
+      c = '<p class="small">Today\'s par is ' + par + ' questions. ' + (win ? (diff < 0 ? 'You beat it by ' + (-diff) + '!' : diff === 0 ? 'You matched it.' : 'You were ' + diff + ' over.') : '') + ' Win more Dailies to build your record.</p>';
+    } else {
+      var best = Math.min.apply(null, wins), avg = Math.round(wins.reduce(function (s, x) { return s + x; }, 0) / wins.length * 10) / 10;
+      c = '<table><tr><th></th><th class="num">QUESTIONS</th></tr>' +
+        '<tr><td>Today</td><td class="num">' + (win ? G.asked : 'Loss') + '</td></tr>' +
+        '<tr><td>Today\'s par</td><td class="num">' + par + '</td></tr>' +
+        '<tr><td>Your average win</td><td class="num">' + avg + '</td></tr>' +
+        '<tr><td>Your best win</td><td class="num">' + best + '</td></tr></table>' +
+        (win && G.asked < best ? '<p class="small good" style="margin-top:8px">New personal best!</p>' : '');
+    }
+    $('f-compare').innerHTML = c;
+
+    $('f-weekbox').hidden = G.arch || G.prac;
+    if (!G.arch && !G.prac) {
+      var wr = weekRecord(G.day);
+      $('f-week').innerHTML = weekCells(G.day);
+      $('f-week-rec').textContent = wr.text;
+      var note = su.allpro ? (win ? 'You won the playoff game. Week complete: ' + wr.text + '.' : 'Playoff game over. Week finished ' + wr.text + '.') : 'Sunday is the playoff game against an All-Pro CPU.';
+      if (G.byeUsed) note += ' A bye saved your streak.';
+      if (G.byeEarned) note += ' 7 days in a row: you earned a bye!';
+      $('f-weeknote').textContent = note;
+    }
+    $('f-tombox').hidden = G.day !== T.num;
+    $('f-tomorrow').textContent = tomorrowText();
+    $('f-league').hidden = G.arch || G.prac;
+    var canReplay = !G.arch && G.day === T.num && TG && TG.done;
+    $('f-replay').hidden = !canReplay;
+    $('f-replay').firstChild.textContent = G.prac ? 'REPLAY AGAIN · PRACTICE' : 'REPLAY TODAY · PRACTICE';
+    $('f-next').textContent = 'Next Daily in ' + untilMidnight();
+    $('f-text').value = shareText();
+    $('f-share').textContent = 'SHARE RESULT';
+    $('f-sharebox').hidden = true;
+  }
+
+  // ---------- archive ----------
+  function renderArchive() {
+    var h = '', first = Math.max(1, T.num - 60);
+    for (var d = T.num - 1; d >= first; d--) {
+      var su = setup(d), r = S.hist[d];
+      var tag = su.theme ? THEMES[su.theme].name : 'MIXED';
+      var right = r ? '<span class="r px" style="color:' + (r.res === 'W' ? 'var(--green)' : 'var(--pink)') + '">' + r.res + ' · ' + r.a + 'Q' + (r.arch ? '*' : '') + '</span>' :
+        '<button class="btn sm primary" type="button" data-play="' + d + '">' + (AG && AG.day === d ? 'RESUME' : 'PLAY') + '</button>';
+      h += '<div class="arow"><div class="meta"><span class="t px">#' + d + ' · ' + esc(su.label.toUpperCase()) + '</span><span class="s">vs ' + esc(su.opp.short) + ' · ' + tag + (su.wx ? ' · ' + WX[su.wx].name : '') + '</span></div>' + right + '</div>';
+    }
+    $('a-list').innerHTML = h ? h + '<p class="muted small">* played from the archive</p>' : '<p class="muted">No past games yet. Come back tomorrow and any day you miss will show up here.</p>';
+  }
+
+  // ---------- trophies ----------
+  function renderTrophies() {
+    var r = rankBar('t-rankbar', S.xp || 0);
+    $('t-rank').textContent = r.name; $('t-xp').textContent = (S.xp || 0) + ' XP';
+    $('t-ladder').textContent = RANKS.map(function (x) { return title(x[1]) + ' ' + x[0]; }).join(' · ');
+    var n = 0, h = '';
+    ACH.forEach(function (a) {
+      var on = !!S.ach[a.id]; if (on) n++;
+      h += '<div class="ach ' + (on ? 'on' : 'off') + '"><span class="ic" aria-hidden="true">' + (on ? '★' : '?') + '</span><div><p class="t">' + esc(a.name) + '</p><p class="d">' + esc(a.desc) + (on ? ' Earned on Daily #' + S.ach[a.id] + '.' : '') + '</p></div></div>';
+    });
+    $('t-list').innerHTML = h;
+    $('t-count').textContent = n + ' of ' + ACH.length + ' trophies earned. Each one is worth 100 XP.';
+  }
+
+  // ---------- league ----------
+  function leagueRows(day) {
+    var rows = [], mine = S.hist[day];
+    if (mine && !mine.arch) rows.push({ n: myName(), me: true, y: mine.y, c: mine.c, r: mine.r, a: mine.a });
+    S.friends.forEach(function (f) { if (f.d === day) rows.push({ n: f.n, me: false, y: f.y, c: f.c, r: f.r, a: f.a }); });
+    rows.sort(function (a, b) { var wa = a.y > a.c, wb = b.y > b.c; return (wb - wa) || (wa ? a.a - b.a : b.a - a.a) || b.r - a.r; });
+    return rows;
+  }
+  function renderLeague() {
+    $('l-name').value = S.name || '';
+    var rows = leagueRows(T.num);
+    $('l-today-h').textContent = 'TODAY · #' + T.num;
+    $('l-today').innerHTML = rows.length ? '<table><tr><th>NAME</th><th class="num">RESULT</th><th class="num">SCORE</th><th class="num">RIGHT</th></tr>' +
+      rows.map(function (r) { var w = r.y > r.c; return '<tr' + (r.me ? ' class="me"' : '') + '><td>' + esc(r.n) + (r.me ? ' (you)' : '') + '</td><td class="num">' + (w ? 'W in ' : 'L · ') + r.a + '</td><td class="num">' + r.y + '-' + r.c + '</td><td class="num">' + r.r + '/' + r.a + '</td></tr>'; }).join('') + '</table>' :
+      '<p class="muted small">No results for today yet. Play the Daily, then paste friends\' results above.</p>';
+    var w = weekOf(T.num), agg = {};
+    w.days.forEach(function (d) {
+      leagueRows(d).forEach(function (r) {
+        var k = (r.me ? '*' : '') + r.n;
+        var a = agg[k] || (agg[k] = { n: r.n, me: r.me, W: 0, L: 0, q: 0 });
+        if (r.y > r.c) { a.W++; a.q += r.a; } else a.L++;
+      });
+    });
+    var list = Object.keys(agg).map(function (k) { var a = agg[k]; a.avg = a.W ? a.q / a.W : 999; return a; }).sort(function (a, b) { return b.W - a.W || a.avg - b.avg; });
+    $('l-week').innerHTML = list.length ? '<table><tr><th>NAME</th><th class="num">W-L</th><th class="num">Q PER WIN</th></tr>' +
+      list.map(function (a) { return '<tr' + (a.me ? ' class="me"' : '') + '><td>' + esc(a.n) + (a.me ? ' (you)' : '') + '</td><td class="num">' + a.W + '-' + a.L + '</td><td class="num">' + (a.W ? (Math.round(a.avg * 10) / 10) : '-') + '</td></tr>'; }).join('') + '</table>' :
+      '<p class="muted small">Standings for Monday to Sunday show up here.</p>';
+    $('l-clear').textContent = 'CLEAR LEAGUE';
+    $('l-clear').dataset.armed = '';
+  }
+
+  // ---------- suggest ----------
+  $('sg-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = function (id) { return $(id).value.trim(); };
+    var q = v('sg-q'), a = v('sg-a'), w = [v('sg-w1'), v('sg-w2'), v('sg-w3')];
+    if (!q || !a || w.some(function (x) { return !x; })) { $('sg-err').textContent = 'Fill in the question and all four answers.'; return; }
+    if (!$('sg-ok').checked) { $('sg-err').textContent = 'Please confirm you wrote the question yourself.'; return; }
+    $('sg-err').textContent = '';
+    var cat = $('sg-c'), dif = $('sg-d');
+    var json = JSON.stringify({ t: dif.value, c: cat.value, q: q, a: [a].concat(w), x: '' });
+    var text = 'TRIVIA DRIVE QUESTION SUGGESTION\nCategory: ' + cat.options[cat.selectedIndex].text + ' | Difficulty: ' + dif.options[dif.selectedIndex].text +
+      '\nQ: ' + q + '\nCorrect: ' + a + '\nWrong: ' + w.join(' / ') + '\nSource: ' + (v('sg-s') || '(none given)') + (S.name ? '\nFrom: ' + S.name : '') +
+      '\nPermission: I wrote this question myself and Trivia Drive may use and edit it.\n\n' + json;
+    $('sg-text').value = text; $('sg-out').hidden = false;
+    var where = "Copy it and send it to the game's creator.";
+    if (CONFIG.suggestEmail) where = 'Copy it and email it to ' + CONFIG.suggestEmail + '.';
+    $('sg-where').innerHTML = esc(where) + (CONFIG.suggestUrl ? ' <a href="' + esc(CONFIG.suggestUrl) + '" target="_blank" rel="noopener" style="color:var(--gold)">Open the submission form</a>' : '');
+    $('sg-text').focus(); $('sg-text').select();
+  });
+  $('sg-copy').addEventListener('click', function () { copyText($('sg-text').value, this, function () { $('sg-text').focus(); $('sg-text').select(); }); });
+
+  function copyText(text, btnEl, fallback) {
+    var orig = btnEl.textContent;
+    function fb() { fallback(); btnEl.textContent = 'SELECT + COPY BELOW'; }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { btnEl.textContent = 'COPIED!'; say('Copied'); setTimeout(function () { btnEl.textContent = orig; }, 2000); }, fb);
+      else fb();
+    } catch (e) { fb(); }
+  }
+
+  // ---------- events ----------
+  $('panel').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-act]');
+    if (!b || b.disabled || !G) return;
+    ac();
+    var a = b.getAttribute('data-act');
+    if (a === 'ans') pick(Number(b.getAttribute('data-i')));
+    else if (a === 'next') next();
+    else if (a === 'chal') challenge();
+    else if (a === 'receive' || a === 'defer') { if (G.step === 'toss' && MOD().tossWin) { sfx('whistle'); tossPick(a); } }
+    else if (a === 'tosslost') { if (G.step === 'toss' && !MOD().tossWin) { sfx('whistle'); tossLost(); } }
+    else if (a.indexOf('play-') === 0) call(a.slice(5));
+    else call(a);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!G || $('game').hidden || $('help').open || $('suggest').open) return;
+    if (G.step === 'question' && e.key.length === 1) {
+      var k = e.key.toLowerCase(), idx = '1234'.indexOf(k) >= 0 ? '1234'.indexOf(k) : 'abcd'.indexOf(k);
+      if (idx >= 0) { e.preventDefault(); ac(); pick(idx); }
+    }
+  });
+
+  function openDlg(id) { var d = $(id); try { d.showModal(); } catch (e) { d.setAttribute('open', ''); } }
+  document.querySelectorAll('[data-help]').forEach(function (b) { b.addEventListener('click', function () { openDlg('help'); }); });
+  document.querySelectorAll('[data-home]').forEach(function (b) { b.addEventListener('click', function () { show('home'); }); });
+  document.querySelectorAll('[data-sound]').forEach(function (b) { b.addEventListener('click', function () { S.mute = !S.mute; persist(); soundLabels(); if (!S.mute) { ac(); sfx('good'); } }); });
+  $('h-suggest').addEventListener('click', function () { $('sg-out').hidden = true; openDlg('suggest'); });
+  $('h-arch').addEventListener('click', function () { show('archive'); });
+  $('h-league').addEventListener('click', function () { show('league'); });
+  $('h-trophies').addEventListener('click', function () { show('trophies'); });
+  $('f-league').addEventListener('click', function () { show('league'); });
+  $('h-play').addEventListener('click', function () {
+    ac();
+    if (TG && TG.done) { G = TG; show('final'); return; }
+    if (!TG) { TG = newGame(T.num, false, false); persist(); }
+    G = TG; show('game');
+    if (!S.seenHelp) { S.seenHelp = true; persist(); openDlg('help'); }
+  });
+  function startReplay(fresh) {
+    if (!TG || !TG.done) return;
+    if (fresh || !PG || PG.done || PG.day !== T.num) { PG = newGame(T.num, false, true); persist(); }
+    G = PG; show('game');
+  }
+  $('h-replay').addEventListener('click', function () { ac(); startReplay(false); });
+  $('f-replay').addEventListener('click', function () { ac(); startReplay(true); });
+  $('a-list').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-play]'); if (!b) return;
+    ac();
+    var d = Number(b.getAttribute('data-play'));
+    if (!AG || AG.day !== d) { AG = newGame(d, true, false); persist(); }
+    G = AG; show('game');
+  });
+  $('f-share').addEventListener('click', function () {
+    var text = shareText();
+    copyText(text, this, function () { $('f-sharebox').hidden = false; var ta = $('f-text'); ta.value = text; ta.focus(); ta.select(); });
+  });
+  $('l-save').addEventListener('click', function () {
+    var n = cleanName($('l-name').value);
+    S.name = n; persist(); $('l-name').value = n;
+    $('l-namemsg').textContent = n ? 'Saved. Your share code now says ' + n + '.' : 'Name cleared. Your code will say PLAYER.';
+    renderLeague();
+  });
+  $('l-add').addEventListener('click', function () {
+    var p = parseCodes($('l-paste').value);
+    p.ok.forEach(function (f) {
+      var i = S.friends.findIndex(function (x) { return x.n === f.n && x.d === f.d; });
+      if (i >= 0) S.friends[i] = f; else S.friends.push(f);
+    });
+    persist(); renderLeague();
+    var msg = p.ok.length ? 'Added ' + p.ok.length + ' result' + (p.ok.length > 1 ? 's' : '') + '.' : 'No valid results found. Paste the whole share text, including the line that starts with TD-.';
+    if (p.bad) msg += ' ' + p.bad + ' code' + (p.bad > 1 ? 's' : '') + " didn't check out (edited, mistyped or from the old version).";
+    $('l-msg').textContent = msg; $('l-msg').className = 'small ' + (p.ok.length ? 'good' : 'bad');
+    if (p.ok.length) $('l-paste').value = '';
+  });
+  $('l-clear').addEventListener('click', function () {
+    var b = this;
+    if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'TAP AGAIN TO CLEAR'; return; }
+    S.friends = []; persist(); renderLeague(); $('l-msg').textContent = 'League cleared.'; $('l-msg').className = 'small';
+  });
+
+  setInterval(function () {
+    if (!$('final').hidden) $('f-next').textContent = 'Next Daily in ' + untilMidnight();
+    if (!$('home').hidden && TG && TG.done) $('h-next').textContent = 'Next Daily in ' + untilMidnight();
+    var t = today();
+    if (t.num !== T.num) { T = t; if (TG && TG.done) TG = null; if (PG && PG.day !== T.num && $('game').hidden) PG = null; if (!$('home').hidden) renderHome(); }
+  }, 1000);
+
+  // test hook (used by automated tests only)
+  window.__td = { parFor: parFor, setup: setup, state: function () { return G; }, sim: function (day, seed) { var kg = G, ks = SIM; try { var r = simGame(day, seed); r.sd = G.sd; r.you = G.you; r.cpu = G.cpu; r.poss = G.poss.you + G.poss.cpu; r.codes = G.drives.map(function (d) { return d.s + ':' + d.r; }).join(' '); return r; } finally { G = kg; SIM = ks; } } };
+
+  // resume: finish an interrupted reveal, or count an expired question as running out of time
+  [TG, AG, PG].forEach(function (g) {
+    if (!g) return;
+    G = g;
+    if (g.step === 'reveal') resolve(g.pick);
+    else if (g.step === 'question' && Date.now() >= g.deadline) resolve(-1);
+  });
+  G = null;
+  show('home');
+})();
+</script>
+</body>
+</html>
